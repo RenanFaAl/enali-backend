@@ -9,11 +9,34 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
 class ApplicationExceptionHandlerController {
-  
-  @ExceptionHandler(IllegalArgumentException::class)
-  fun handleIllegalArgumentException(ex: IllegalArgumentException): ResponseEntity<Map<String, String>> {
-      val erro = mapOf("erro" to (ex.message ?: "Erro de validação"))
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro)
-  }
-    
+
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleIllegalArgumentException(
+        ex: IllegalArgumentException
+    ): ResponseEntity<Map<String, String>> {
+        val erro = mapOf(
+            "erro" to (ex.message ?: "Erro de validação")
+        )
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro)
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleMethodException(
+        ex: MethodArgumentNotValidException
+    ): ResponseEntity<Map<String, String>> {
+        val erros = hashMapOf<String, String>()
+
+        ex.bindingResult.allErrors.forEach { erro ->
+            if (erro is FieldError) {
+                val fieldName = erro.field
+                val message = erro.defaultMessage
+                    ?: "Erro no campo $fieldName"
+
+                erros[fieldName] = message
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erros)
+    }
 }

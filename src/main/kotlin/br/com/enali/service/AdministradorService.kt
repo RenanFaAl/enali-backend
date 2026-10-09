@@ -21,6 +21,10 @@ class AdministradorService(
         return administradorRepository.findByEmail(email)
     }
 
+    fun buscarPorNome(nome: String): List<Administrador> {
+        return administradorRepository.buscarPorNome(nome)
+    }
+
     fun salvar(administrador: Administrador): Administrador {
         val existente = administradorRepository.findByEmail(administrador.email)
         if (existente != null) {
@@ -29,13 +33,28 @@ class AdministradorService(
         return administradorRepository.save(administrador)
     }
 
-    fun atualizar(id: Long, administradorAtualizado: Administrador): Administrador {
-        if (!administradorRepository.existsById(id)) {
-            throw IllegalArgumentException("Administrador não encontrado.")
+
+    fun atualizar(
+        id: Long,
+        administradorAtualizado: Administrador
+    ): Administrador {
+        val existente = administradorRepository.findById(id).orElse(null)
+            ?: throw IllegalArgumentException("Administrador não encontrado.")
+
+        val adminComMesmoEmail =
+            administradorRepository.findByEmail(administradorAtualizado.email)
+
+        if (adminComMesmoEmail != null && adminComMesmoEmail.id != id) {
+            throw IllegalArgumentException(
+                "Já existe outro administrador com este e-mail."
+            )
         }
-        val adminParaSalvar = administradorAtualizado.copy(id = id)
+
+        val adminParaSalvar = administradorAtualizado.copy(id = existente.id)
+
         return administradorRepository.save(adminParaSalvar)
     }
+
 
     fun deletar(id: Long) {
         administradorRepository.deleteById(id)

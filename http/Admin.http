@@ -1,35 +1,35 @@
+
 ### Listar administradores
-GET http://localhost:8080/admin HTTP/1.1
+GET http://localhost:8080/admin
 
-### Buscar administrador por ID 
-GET http://localhost:8080/admin/1 HTTP/1.1
+### Buscar administrador por ID
+GET http://localhost:8080/admin/1
 
-### Buscar administrador por E-mail
-GET http://localhost:8080/admin/buscar?email=guilherme@teste.com HTTP/1.1
+### Buscar administrador por e-mail
+GET http://localhost:8080/admin/buscar/email?email=guilherme@teste.com
+
+### Buscar administradores por nome
+GET http://localhost:8080/admin/buscar/nome?nome=gui
 
 ### Criar administrador
-POST http://localhost:8080/admin HTTP/1.1
+POST http://localhost:8080/admin
 Content-Type: application/json
 
 {
     "nome": "Guilherme Rocha",
-    "email": "guilherme2@teste.com",
-    "senha": "123456",
-    "ativo": true,
-    "nivelAcesso": "ADMIN_COMUM"
+    "email": "guilherme3@teste.com",
+    "senha": "Teste@12"
 }
 
 ### Atualizar administrador
-PUT http://localhost:8080/admin/4 HTTP/1.1
+PUT http://localhost:8080/admin/1
 Content-Type: application/json
 
 {
     "nome": "Guilherme Rocha Atualizado",
-    "email": "guilherme2@teste.com",
-    "senha": "123456",
-    "ativo": true,
-    "nivelAcesso": "ADMIN_MASTER"
+    "email": "guilherme@teste.com",
+    "senha": "Teste@12"
 }
 
-### Deletar administrador 
-DELETE http://localhost:8080/admin/5 HTTP/1.1
+### Deletar administrador
+DELETE http://localhost:8080/admin/2

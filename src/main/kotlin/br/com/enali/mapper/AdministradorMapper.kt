@@ -19,13 +19,25 @@ class AdministradorMapper {
         )
     }
 
+    fun atualizarModel(
+        administrador: Administrador,
+        dto: AdministradorRequestDTO
+    ): Administrador {
+        return administrador.copy(
+            nome = dto.nome,
+            email = dto.email,
+            senha = dto.senha
+        )
+    }
+
     fun toDTO(administrador: Administrador): AdministradorResponseDTO {
         return AdministradorResponseDTO(
             id = administrador.id,
             nome = administrador.nome,
             email = administrador.email,
             ativo = administrador.ativo,
-            nivelAcesso = administrador.nivelAcesso
+            nivelAcesso = administrador.nivelAcesso,
+            dataCriacao = administrador.dataCriacao
         )
     }
 }
