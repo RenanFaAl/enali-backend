@@ -11,8 +11,8 @@ class AdministradorMapper {
     fun toModel(dto: AdministradorRequestDTO): Administrador {
         return Administrador(
             id = 0,
-            nome = dto.nome,
-            email = dto.email,
+            nome = dto.nome.trim(),
+            email = dto.email.trim().lowercase(),
             senha = dto.senha,
             ativo = true,
             nivelAcesso = "ADMIN_COMUM"
@@ -24,8 +24,8 @@ class AdministradorMapper {
         dto: AdministradorRequestDTO
     ): Administrador {
         return administrador.copy(
-            nome = dto.nome,
-            email = dto.email,
+            nome = dto.nome.trim(),
+            email = dto.email.trim().lowercase(),
             senha = dto.senha
         )
     }
