@@ -2,47 +2,57 @@ package br.com.enali.service
 
 import br.com.enali.model.Administrador
 import br.com.enali.repository.AdministradorRepository
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
 class AdministradorService(
-    private val administradorRepository: AdministradorRepository
+    private val repository: AdministradorRepository,
+    private val passwordEncoder: PasswordEncoder
 ) {
 
     fun listarTodos(): List<Administrador> {
-        return administradorRepository.findAll()
+        return repository.findAll()
     }
 
     fun procurarPorId(id: Long): Administrador? {
-        return administradorRepository.findById(id).orElse(null)
+        return repository.findById(id).orElse(null)
     }
 
     fun procurarPorEmail(email: String): Administrador? {
-        return administradorRepository.findByEmail(email)
+        return repository.findByEmail(email)
     }
 
     fun buscarPorNome(nome: String): List<Administrador> {
-        return administradorRepository.buscarPorNome(nome)
+        return repository.buscarPorNome(nome)
     }
 
     fun salvar(administrador: Administrador): Administrador {
-        val existente = administradorRepository.findByEmail(administrador.email)
+        val email = administrador.email.trim().lowercase()
+
+        val existente = repository.findByEmail(email)
+
         if (existente != null) {
             throw IllegalArgumentException("Já existe um administrador com este e-mail.")
         }
-        return administradorRepository.save(administrador)
-    }
 
+        val administradorProtegido = administrador.copy(
+            email = email,
+            senha = requireNotNull(passwordEncoder.encode(administrador.senha))
+        )
+
+        return repository.save(administradorProtegido)
+    }
 
     fun atualizar(
         id: Long,
-        administradorAtualizado: Administrador
+        administrador: Administrador
     ): Administrador {
-        val existente = administradorRepository.findById(id).orElse(null)
+        val existente = repository.findById(id).orElse(null)
             ?: throw IllegalArgumentException("Administrador não encontrado.")
 
-        val adminComMesmoEmail =
-            administradorRepository.findByEmail(administradorAtualizado.email)
+        val email = administrador.email.trim().lowercase()
+        val adminComMesmoEmail = repository.findByEmail(email)
 
         if (adminComMesmoEmail != null && adminComMesmoEmail.id != id) {
             throw IllegalArgumentException(
@@ -50,17 +60,44 @@ class AdministradorService(
             )
         }
 
-        val adminParaSalvar = administradorAtualizado.copy(id = existente.id)
+        val adminParaSalvar = administrador.copy(
+            id = existente.id,
+            email = email,
+            senha = existente.senha,
+            ativo = existente.ativo,
+            nivelAcesso = existente.nivelAcesso,
+            dataCriacao = existente.dataCriacao
+        )
 
-        return administradorRepository.save(adminParaSalvar)
+        return repository.save(adminParaSalvar)
     }
 
+    fun alterarSenha(
+        id: Long,
+        senhaAtual: String,
+        senhaNova: String
+    ) {
+        val administrador = repository.findById(id).orElse(null)
+            ?: throw IllegalArgumentException("Administrador não encontrado.")
+
+        if (!passwordEncoder.matches(senhaAtual, administrador.senha)) {
+            throw IllegalArgumentException("A senha atual está incorreta.")
+        }
+
+        val novaSenhaHash = requireNotNull(
+            passwordEncoder.encode(senhaNova)
+        )
+
+        repository.save(
+            administrador.copy(senha = novaSenhaHash)
+        )
+    }
 
     fun deletar(id: Long) {
-        administradorRepository.deleteById(id)
+        repository.deleteById(id)
     }
 
     fun existe(id: Long): Boolean {
-        return administradorRepository.existsById(id)
+        return repository.existsById(id)
     }
 }

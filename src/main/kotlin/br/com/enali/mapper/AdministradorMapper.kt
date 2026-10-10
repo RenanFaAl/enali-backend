@@ -1,5 +1,6 @@
 package br.com.enali.mapper
 
+import br.com.enali.dto.AdministradorAtualizacaoRequestDTO
 import br.com.enali.dto.AdministradorRequestDTO
 import br.com.enali.dto.AdministradorResponseDTO
 import br.com.enali.model.Administrador
@@ -21,12 +22,11 @@ class AdministradorMapper {
 
     fun atualizarModel(
         administrador: Administrador,
-        dto: AdministradorRequestDTO
+        dto: AdministradorAtualizacaoRequestDTO
     ): Administrador {
         return administrador.copy(
             nome = dto.nome.trim(),
-            email = dto.email.trim().lowercase(),
-            senha = dto.senha
+            email = dto.email.trim().lowercase()
         )
     }
 

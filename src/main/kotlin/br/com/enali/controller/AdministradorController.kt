@@ -1,7 +1,9 @@
 package br.com.enali.controller
 
+import br.com.enali.dto.AdministradorAtualizacaoRequestDTO
 import br.com.enali.dto.AdministradorRequestDTO
 import br.com.enali.dto.AdministradorResponseDTO
+import br.com.enali.dto.AlterarSenhaRequestDTO
 import br.com.enali.mapper.AdministradorMapper
 import br.com.enali.model.Administrador
 import br.com.enali.service.AdministradorService
@@ -72,7 +74,7 @@ class AdministradorController(
     @PutMapping("/{id}")
     fun atualizar(
         @PathVariable id: Long,
-        @Valid @RequestBody request: AdministradorRequestDTO
+        @Valid @RequestBody request: AdministradorAtualizacaoRequestDTO
     ): ResponseEntity<AdministradorResponseDTO> {
         val existente = service.procurarPorId(id)
             ?: return ResponseEntity.notFound().build()
@@ -83,17 +85,39 @@ class AdministradorController(
         return ResponseEntity.ok(mapper.toDTO(adminSalvo))
     }
 
+    @PatchMapping("/{id}/senha")
+    fun alterarSenha(
+        @PathVariable id: Long,
+        @Valid @RequestBody request: AlterarSenhaRequestDTO
+    ): ResponseEntity<Map<String, String>> {
+
+        if (request.senhaNova != request.confirmarSenha) {
+            return ResponseEntity.badRequest()
+                .body(mapOf("mensagem" to "A confirmação da senha não corresponde à nova senha."))
+        }
+
+        service.alterarSenha(
+            id = id,
+            senhaAtual = request.senhaAtual,
+            senhaNova = request.senhaNova
+        )
+
+        return ResponseEntity.ok(
+            mapOf("mensagem" to "Senha alterada com sucesso.")
+        )
+    }
+
 
     @DeleteMapping("/{id}")
     fun deletar(
         @PathVariable id: Long
-    ): ResponseEntity<String> {
+    ): ResponseEntity<Map<String, String>> {
         if (!service.existe(id)) {
             return ResponseEntity.notFound().build()
         }
 
         service.deletar(id)
 
-        return ResponseEntity.ok("Administrador excluído com sucesso.")
+        return ResponseEntity.ok(mapOf("mensagem" to "Administrador excluído com sucesso."))
     }
 }
