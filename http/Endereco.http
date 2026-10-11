@@ -1,0 +1,56 @@
+### Listar endereços
+GET http://localhost:8080/enderecos
+
+### Buscar endereço por ID
+GET http://localhost:8080/enderecos/1
+
+### Buscar endereços por rua
+GET http://localhost:8080/enderecos/buscar/rua?rua=Paulista
+
+### Buscar endereços por bairro
+GET http://localhost:8080/enderecos/buscar/bairro?bairro=cidade
+
+### Buscar endereços por cidade
+GET http://localhost:8080/enderecos/buscar/cidade?cidade=São Paulo
+
+### Buscar endereços por sigla do estado
+GET http://localhost:8080/enderecos/buscar/estado?sigla=SP
+
+### Criar endereço
+POST http://localhost:8080/enderecos
+Content-Type: application/json
+
+{
+    "rua": "Avenida Águia de Haia",
+    "numero": "2983",
+    "complemento": "FATEC Zona Leste",
+    "bairro": "Cidade Antônio Estêvão de Carvalho",
+    "cidade": "São Paulo",
+    "estado": "São Paulo",
+    "siglaEstado": "sp",
+    "cep": "03694-000",
+    "pais": "Brasil",
+    "referencia": "Ao lado da ETEC Zona Leste",
+    "principal": true
+}
+
+### Atualizar endereço
+PUT http://localhost:8080/enderecos/1
+Content-Type: application/json
+
+{
+    "rua": "Avenida Paulista",
+    "numero": "1000",
+    "complemento": "Apartamento 12",
+    "bairro": "Bela Vista",
+    "cidade": "São Paulo",
+    "estado": "São Paulo",
+    "siglaEstado": "sp",
+    "cep": "01310-100",
+    "pais": "Brasil",
+    "referencia": "Próximo ao metrô",
+    "principal": true
+}
+
+### Deletar endereço
+DELETE http://localhost:8080/enderecos/1

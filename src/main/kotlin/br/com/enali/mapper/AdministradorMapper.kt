@@ -1,0 +1,43 @@
+package br.com.enali.mapper
+
+import br.com.enali.dto.AdministradorAtualizacaoRequestDTO
+import br.com.enali.dto.AdministradorRequestDTO
+import br.com.enali.dto.AdministradorResponseDTO
+import br.com.enali.model.Administrador
+import org.springframework.stereotype.Component
+
+@Component
+class AdministradorMapper {
+
+    fun toModel(dto: AdministradorRequestDTO): Administrador {
+        return Administrador(
+            id = 0,
+            nome = dto.nome.trim(),
+            email = dto.email.trim().lowercase(),
+            senha = dto.senha,
+            ativo = true,
+            nivelAcesso = "ADMIN_COMUM"
+        )
+    }
+
+    fun atualizarModel(
+        administrador: Administrador,
+        dto: AdministradorAtualizacaoRequestDTO
+    ): Administrador {
+        return administrador.copy(
+            nome = dto.nome.trim(),
+            email = dto.email.trim().lowercase()
+        )
+    }
+
+    fun toDTO(administrador: Administrador): AdministradorResponseDTO {
+        return AdministradorResponseDTO(
+            id = administrador.id,
+            nome = administrador.nome,
+            email = administrador.email,
+            ativo = administrador.ativo,
+            nivelAcesso = administrador.nivelAcesso,
+            dataCriacao = administrador.dataCriacao
+        )
+    }
+}

@@ -1,0 +1,9 @@
+### Login
+POST http://localhost:8080/auth/admin/signin
+Content-Type: application/json
+
+{
+    "email": "guilherme@teste.com",
+    "senha": "NovaSenha@123"
+}
+
