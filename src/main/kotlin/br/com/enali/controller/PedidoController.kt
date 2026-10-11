@@ -1,9 +1,9 @@
-package com.example.ecommerce.controller
+package br.com.enali.controller
 
-import com.example.ecommerce.dto.PedidoRequest
-import com.example.ecommerce.dto.PedidoResponse
-import com.example.ecommerce.model.Pedido
-import com.example.ecommerce.repository.PedidoRepository
+import br.com.enali.DTO.PedidoRequest
+import br.com.enali.DTO.PedidoResponse
+import br.com.enali.model.Pedido
+import br.com.enali.repository.PedidoRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

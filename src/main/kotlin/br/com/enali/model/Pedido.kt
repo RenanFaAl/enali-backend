@@ -1,4 +1,4 @@
-package com.example.ecommerce.model
+package br.com.enali.model
 
 import jakarta.persistence.*
 import java.math.BigDecimal

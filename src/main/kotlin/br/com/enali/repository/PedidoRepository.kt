@@ -1,6 +1,6 @@
-package com.example.ecommerce.repository
+package br.com.enali.repository
 
-import com.example.ecommerce.model.Pedido
+import br.com.enali.model.Pedido
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 

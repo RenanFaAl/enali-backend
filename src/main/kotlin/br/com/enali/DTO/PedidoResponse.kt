@@ -1,12 +1,10 @@
-import java.math.BigDecimal
 
-data class PedidoRequest(
+package br.com.enali.DTO
 
+data class PedidoResponse(
+    val id: Long,
     val numeroPedido: String,
-
-    val valorTotal: BigDecimal,
-
+    val valorTotal: Double,
     val status: String,
-
-    val observacoes: String?
+    val observacoes: String
 )

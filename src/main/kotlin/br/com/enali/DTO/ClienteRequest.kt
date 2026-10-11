@@ -1,4 +1,4 @@
-package com.example.ecommerce.dto
+package br.com.enali.DTO
 
 import java.time.LocalDate
 
