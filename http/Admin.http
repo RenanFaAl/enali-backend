@@ -1,44 +1,74 @@
+### Consultar meus dados
+GET http://localhost:8080/admin/me
+Authorization: Bearer TOKEN
+
+
+### Atualizar meus dados
+PUT http://localhost:8080/admin/me
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+    "nome": "Guilherme Rocha Atualizado",
+    "email": "guilherme@teste.com"
+}
+
+
+### Alterar minha senha
+PATCH http://localhost:8080/admin/me/senha
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+    "senhaAtual": "Teste@12",
+    "senhaNova": "NovaSenha@123",
+    "confirmarSenha": "NovaSenha@123"
+}
+
 
 ### Listar administradores
 GET http://localhost:8080/admin
+Authorization: Bearer TOKEN
+
 
 ### Buscar administrador por ID
-GET http://localhost:8080/admin/1
+GET http://localhost:8080/admin/7
+Authorization: Bearer TOKEN
+
 
 ### Buscar administrador por e-mail
-GET http://localhost:8080/admin/buscar/email?email=guilherme2@teste.com
+GET http://localhost:8080/admin/buscar/email?email=guilherme5@teste.com
+Authorization: Bearer TOKEN
+
 
 ### Buscar administradores por nome
 GET http://localhost:8080/admin/buscar/nome?nome=tes
+Authorization: Bearer TOKEN
+
 
 ### Criar administrador
 POST http://localhost:8080/admin
+Authorization: Bearer TOKEN
 Content-Type: application/json
 
 {
-    "nome": "Guilherme Rocha",
-    "email": "guilherme@teste.com",
+    "nome": "Teste 2",
+    "email": "teste2@teste.com",
     "senha": "Teste@12"
 }
 
+
 ### Atualizar administrador (nome e e-mail)
-PUT http://localhost:8080/admin/1
+PUT http://localhost:8080/admin/11
+Authorization: Bearer TOKEN
 Content-Type: application/json
 
 {
-    "nome": "Guilherme Rocha",
-    "email": "guilherme@outroteste.com"
+    "nome": "Teste 02",
+    "email": "teste02@outroteste.com"
 }
 
-### Alterar senha do administrador
-PATCH http://localhost:8080/admin/6/senha
-Content-Type: application/json
-
-{
-    "senhaAtual": "NovaSenha@123",
-    "senhaNova": "Teste@12",
-    "confirmarSenha": "Teste@12"
-}
 
 ### Deletar administrador
-DELETE http://localhost:8080/admin/4
+DELETE http://localhost:8080/admin/11
+Authorization: Bearer TOKEN

@@ -10,6 +10,7 @@ import br.com.enali.service.AdministradorService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -27,6 +28,16 @@ class AdministradorController(
         }
 
         return ResponseEntity.ok(listaDTO)
+    }
+
+    @GetMapping("/me")
+    fun meusDados(
+        authentication: Authentication
+    ): ResponseEntity<AdministradorResponseDTO> {
+        val administrador = service.procurarPorEmail(authentication.name)
+            ?: return ResponseEntity.notFound().build()
+
+        return ResponseEntity.ok(mapper.toDTO(administrador))
     }
 
     @GetMapping("/{id}")
@@ -85,9 +96,23 @@ class AdministradorController(
         return ResponseEntity.ok(mapper.toDTO(adminSalvo))
     }
 
-    @PatchMapping("/{id}/senha")
+    @PutMapping("/me")
+    fun atualizarMeusDados(
+        authentication: Authentication,
+        @Valid @RequestBody request: AdministradorAtualizacaoRequestDTO
+    ): ResponseEntity<AdministradorResponseDTO> {
+        val existente = service.procurarPorEmail(authentication.name)
+            ?: return ResponseEntity.notFound().build()
+
+        val adminAtualizado = mapper.atualizarModel(existente, request)
+        val adminSalvo = service.atualizar(existente.id, adminAtualizado)
+
+        return ResponseEntity.ok(mapper.toDTO(adminSalvo))
+    }
+
+    @PatchMapping("/me/senha")
     fun alterarSenha(
-        @PathVariable id: Long,
+        authentication: Authentication,
         @Valid @RequestBody request: AlterarSenhaRequestDTO
     ): ResponseEntity<Map<String, String>> {
 
@@ -96,8 +121,11 @@ class AdministradorController(
                 .body(mapOf("mensagem" to "A confirmação da senha não corresponde à nova senha."))
         }
 
+        val administrador = service.procurarPorEmail(authentication.name)
+            ?: return ResponseEntity.notFound().build()
+
         service.alterarSenha(
-            id = id,
+            id = administrador.id,
             senhaAtual = request.senhaAtual,
             senhaNova = request.senhaNova
         )
