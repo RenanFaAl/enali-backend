@@ -1,23 +1,30 @@
 ### Listar endereços
 GET http://localhost:8080/enderecos
+Authorization: Bearer TOKEN
 
 ### Buscar endereço por ID
-GET http://localhost:8080/enderecos/1
+GET http://localhost:8080/enderecos/2
+Authorization: Bearer TOKEN
 
 ### Buscar endereços por rua
 GET http://localhost:8080/enderecos/buscar/rua?rua=Paulista
+Authorization: Bearer TOKEN
 
 ### Buscar endereços por bairro
-GET http://localhost:8080/enderecos/buscar/bairro?bairro=cidade
+GET http://localhost:8080/enderecos/buscar/bairro?bairro=carvalho
+Authorization: Bearer TOKEN
 
 ### Buscar endereços por cidade
 GET http://localhost:8080/enderecos/buscar/cidade?cidade=São Paulo
+Authorization: Bearer TOKEN
 
 ### Buscar endereços por sigla do estado
 GET http://localhost:8080/enderecos/buscar/estado?sigla=SP
+Authorization: Bearer TOKEN
 
 ### Criar endereço
 POST http://localhost:8080/enderecos
+Authorization: Bearer TOKEN
 Content-Type: application/json
 
 {
@@ -35,7 +42,8 @@ Content-Type: application/json
 }
 
 ### Atualizar endereço
-PUT http://localhost:8080/enderecos/1
+PUT http://localhost:8080/enderecos/2
+Authorization: Bearer TOKEN
 Content-Type: application/json
 
 {
@@ -53,4 +61,5 @@ Content-Type: application/json
 }
 
 ### Deletar endereço
-DELETE http://localhost:8080/enderecos/1
+DELETE http://localhost:8080/enderecos/3
+Authorization: Bearer TOKEN
