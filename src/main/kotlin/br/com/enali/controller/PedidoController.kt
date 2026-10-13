@@ -1,7 +1,7 @@
 package br.com.enali.controller
 
-import br.com.enali.DTO.PedidoRequest
-import br.com.enali.DTO.PedidoResponse
+import br.com.enali.dto.PedidoRequest
+import br.com.enali.dto.PedidoResponse
 import br.com.enali.model.Pedido
 import br.com.enali.repository.PedidoRepository
 import org.springframework.http.HttpStatus
