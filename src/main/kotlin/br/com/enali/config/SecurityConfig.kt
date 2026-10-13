@@ -25,7 +25,8 @@ class SecurityConfig(
 
                 it.requestMatchers(
                     "/admin/me",
-                    "/admin/me/**"
+                    "/admin/me/**",
+                    "/enderecos/**"
                 ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM")
 
                 it.requestMatchers(
