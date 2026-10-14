@@ -2,78 +2,60 @@ package br.com.enali.controller
 
 import br.com.enali.dto.PedidoRequest
 import br.com.enali.dto.PedidoResponse
-import br.com.enali.model.Pedido
-import br.com.enali.repository.PedidoRepository
+import br.com.enali.service.PedidoService
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/pedidos")
 class PedidoController(
-    private val pedidoRepository: PedidoRepository
+    private val pedidoService: PedidoService
 ) {
 
     @PostMapping
-    fun criar(@RequestBody request: PedidoRequest): ResponseEntity<PedidoResponse> {
-
-        val pedido = Pedido(
-            numeroPedido = request.numeroPedido,
-            valorTotal = request.valorTotal,
-            dataPedido = LocalDateTime.now(),
-            status = request.status,
-            observacoes = request.observacoes
-        )
-
-        val pedidoSalvo = pedidoRepository.save(pedido)
+    fun criar(
+        @Valid @RequestBody request: PedidoRequest
+    ): ResponseEntity<PedidoResponse> {
+        val pedido = pedidoService.criar(request)
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(pedidoSalvo.toResponse())
+            .body(pedido)
     }
 
     @GetMapping
     fun listar(): ResponseEntity<List<PedidoResponse>> {
-
-        val pedidos = pedidoRepository.findAll()
-            .map { it.toResponse() }
-
-        return ResponseEntity.ok(pedidos)
+        return ResponseEntity.ok(
+            pedidoService.listarTodos()
+        )
     }
 
     @GetMapping("/{id}")
-    fun buscarPorId(@PathVariable id: Long): ResponseEntity<PedidoResponse> {
-
-        val pedido = pedidoRepository.findById(id)
-
-        if (pedido.isEmpty) {
-            return ResponseEntity.notFound().build()
-        }
-
-        return ResponseEntity.ok(pedido.get().toResponse())
+    fun buscarPorId(
+        @PathVariable id: Long
+    ): ResponseEntity<PedidoResponse> {
+        return ResponseEntity.ok(
+            pedidoService.buscarPorId(id)
+        )
     }
 
-    @DeleteMapping("/{id}")
-    fun excluir(@PathVariable id: Long): ResponseEntity<Void> {
-
-        if (!pedidoRepository.existsById(id)) {
-            return ResponseEntity.notFound().build()
-        }
-
-        pedidoRepository.deleteById(id)
-
-        return ResponseEntity.noContent().build()
+    @GetMapping("/buscar")
+    fun buscarPorNumero(
+        @RequestParam numero: String
+    ): ResponseEntity<List<PedidoResponse>> {
+        return ResponseEntity.ok(
+            pedidoService.buscarPorNumero(numero)
+        )
     }
 
-    private fun Pedido.toResponse(): PedidoResponse {
-        return PedidoResponse(
-            id = id,
-            numeroPedido = numeroPedido,
-            valorTotal = valorTotal,
-            dataPedido = dataPedido,
-            status = status,
-            observacoes = observacoes
+    @PatchMapping("/{id}/cancelar")
+    fun cancelar(
+        @PathVariable id: Long
+    ): ResponseEntity<PedidoResponse> {
+        return ResponseEntity.ok(
+            pedidoService.cancelar(id)
         )
     }
 }

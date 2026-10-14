@@ -1,20 +1,23 @@
-
 package br.com.enali.mapper
 
 import br.com.enali.dto.PedidoRequest
 import br.com.enali.dto.PedidoResponse
 import br.com.enali.model.Pedido
 import org.springframework.stereotype.Component
+import java.time.LocalDateTime
 
 @Component
 class PedidoMapper {
 
-    fun toEntity(request: PedidoRequest): Pedido {
+    fun toEntity(
+        request: PedidoRequest,
+        numeroPedido: String
+    ): Pedido {
         return Pedido(
-            numeroPedido = request.numeroPedido,
+            numeroPedido = numeroPedido,
             valorTotal = request.valorTotal,
-            dataPedido = request.dataPedido,
-            status = request.status,
+            dataPedido = LocalDateTime.now(),
+            status = "PENDENTE",
             observacoes = request.observacoes
         )
     }

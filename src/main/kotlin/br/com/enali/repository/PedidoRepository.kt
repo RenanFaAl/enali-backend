@@ -1,4 +1,3 @@
-
 package br.com.enali.repository
 
 import br.com.enali.model.Pedido
@@ -8,9 +7,11 @@ import org.springframework.data.repository.query.Param
 
 interface PedidoRepository : JpaRepository<Pedido, Long> {
 
+    fun findByNumeroPedidoStartingWith(prefixo: String): List<Pedido>
+
     @Query(
         "SELECT p FROM Pedido p " +
-        "WHERE LOWER(p.numeroPedido) LIKE LOWER(CONCAT('%', :numero, '%'))"
+                "WHERE LOWER(p.numeroPedido) LIKE LOWER(CONCAT('%', :numero, '%'))"
     )
     fun buscarPorNumero(@Param("numero") numero: String): List<Pedido>
 }
