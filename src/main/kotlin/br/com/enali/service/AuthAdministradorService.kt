@@ -44,7 +44,9 @@ class AuthAdministradorService(
             id = administrador.id,
             nome = administrador.nome,
             email = administrador.email,
-            nivelAcesso = administrador.nivelAcesso
+            nivelAcesso = administrador.nivelAcesso,
+            tipoUsuario = "ADMINISTRADOR"
         )
+
     }
 }

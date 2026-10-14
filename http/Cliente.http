@@ -1,0 +1,31 @@
+# Consultar meus dados
+GET http://localhost:8080/clientes/me
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+
+# Atualizar meus dados
+PUT http://localhost:8080/clientes/me
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "nome": "Cliente Teste 2",
+  "email": "cliente2@teste.com",
+  "cpf": "12345678905",
+  "dataNascimento": "2000-05-20"
+}
+
+
+# Alterar minha senha
+PATCH http://localhost:8080/clientes/me/senha
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "senhaAtual": "Cliente@123",
+  "senhaNova": "SenhaNova@456",
+  "confirmarSenha": "SenhaNova@456"
+}
+
+

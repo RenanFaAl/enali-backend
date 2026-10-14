@@ -1,0 +1,28 @@
+### Listar clientes (Admin)
+GET http://localhost:8080/clientes
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbmFsaUBlbmFsaS5jb20iLCJpZCI6MTIsInRpcG9Vc3VhcmlvIjoiQURNSU5JU1RSQURPUiIsIm5pdmVsQWNlc3NvIjoiQURNSU5fTUFTVEVSIiwiaWF0IjoxNzkxOTM5NzYzLCJleHAiOjE3OTE5NDMzNjN9.bY3oWExnic4f3XSvPo7o5mbablN1OcXPdgCl_aV66NA
+Content-Type: application/json
+
+# Alterar status do cliente
+PATCH http://localhost:8080/clientes/1/ativo
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "ativo": false
+}
+
+### Consultar cliente por ID
+GET http://localhost:8080/clientes/1
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+### Buscar clientes por nome
+GET http://localhost:8080/clientes/buscar?nome=Cliente
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+### Excluir cliente
+DELETE http://localhost:8080/clientes/2
+Authorization: Bearer TOKEN
+Content-Type: application/json

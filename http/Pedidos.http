@@ -1,0 +1,35 @@
+### Criar pedido
+POST http://localhost:8080/pedidos
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "valorTotal": 150.50,
+  "observacoes": "Pedido para teste"
+}
+
+
+
+### Consultar pedido
+GET http://localhost:8080/pedidos/1
+Authorization: Bearer TOKEN
+
+
+### Cancelar pedido
+PATCH http://localhost:8080/pedidos/1/cancelar
+Authorization: Bearer TOKEN
+
+
+### Listar pedidos (Admin)
+GET http://localhost:8080/pedidos
+Authorization: Bearer TOKEN
+
+
+### Buscar pedidos (Admin)
+GET http://localhost:8080/pedidos/buscar?numero=202610
+Authorization: Bearer TOKEN
+
+
+### Cancelar pedido (Admin)
+PATCH http://localhost:8080/pedidos/6/cancelar
+Authorization: Bearer TOKEN
