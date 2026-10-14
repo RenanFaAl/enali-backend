@@ -7,9 +7,9 @@ Content-Type: application/json
 
 {
   "nome": "Ana Silva",
-  "email": "ana@example.com",
+  "email": "ana1@example.com",
   "senha": "SenhaSegura123",
-  "cpf": "12345678901",
+  "cpf": "12345678902",
   "dataNascimento": "2000-05-15",
   "ativo": true
 }

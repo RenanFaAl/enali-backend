@@ -6,5 +6,6 @@ data class LoginResponseDTO(
     val id: Long,
     val nome: String,
     val email: String,
-    val nivelAcesso: String
+    val nivelAcesso: String? = null,
+    val tipoUsuario: String
 )

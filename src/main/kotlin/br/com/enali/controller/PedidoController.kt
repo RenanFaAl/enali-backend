@@ -18,19 +18,19 @@ class PedidoController(
     @PostMapping
     fun criar(@RequestBody request: PedidoRequest): ResponseEntity<PedidoResponse> {
 
-    val pedido = Pedido(
-        numeroPedido = request.numeroPedido,
-        valorTotal = request.valorTotal,
-        dataPedido = LocalDateTime.now(),
-        status = request.status,
-        observacoes = request.observacoes
-    )
+        val pedido = Pedido(
+            numeroPedido = request.numeroPedido,
+            valorTotal = request.valorTotal,
+            dataPedido = LocalDateTime.now(),
+            status = request.status,
+            observacoes = request.observacoes
+        )
 
-    val pedidoSalvo = pedidoRepository.save(pedido)
+        val pedidoSalvo = pedidoRepository.save(pedido)
 
-    return ResponseEntity
-        .status(HttpStatus.CREATED)
-        .body(pedidoSalvo.toResponse())
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(pedidoSalvo.toResponse())
     }
 
     @GetMapping

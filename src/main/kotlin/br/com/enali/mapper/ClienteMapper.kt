@@ -1,4 +1,3 @@
-
 package br.com.enali.mapper
 
 import br.com.enali.dto.ClienteRequest
@@ -11,12 +10,12 @@ class ClienteMapper {
 
     fun toEntity(request: ClienteRequest): Cliente {
         return Cliente(
-            nome = request.nome,
-            email = request.email,
+            nome = request.nome.trim(),
+            email = request.email.trim().lowercase(),
             senha = request.senha,
             cpf = request.cpf,
             dataNascimento = request.dataNascimento,
-            ativo = request.ativo
+            ativo = true
         )
     }
 

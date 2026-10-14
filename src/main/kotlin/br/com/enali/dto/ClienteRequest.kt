@@ -1,4 +1,3 @@
-
 package br.com.enali.dto
 
 import jakarta.validation.constraints.Email
@@ -11,7 +10,7 @@ import java.time.LocalDate
 data class ClienteRequest(
 
     @field:NotBlank(message = "O nome é obrigatório")
-    @field:Size(max = 100, message = "O nome deve ter no máximo 100 caracteres")
+    @field:Size(min = 2, max = 100, message = "O nome deve ter entre 2 e 100 caracteres")
     val nome: String,
 
     @field:NotBlank(message = "O e-mail é obrigatório")
@@ -25,13 +24,11 @@ data class ClienteRequest(
 
     @field:NotBlank(message = "O CPF é obrigatório")
     @field:Pattern(
-        regexp = "\\d{11}",
+        regexp = "^\\d{11}$",
         message = "O CPF deve conter 11 números, sem pontos ou traços"
     )
     val cpf: String,
 
     @field:NotNull(message = "A data de nascimento é obrigatória")
-    val dataNascimento: LocalDate,
-
-    val ativo: Boolean = true
+    val dataNascimento: LocalDate
 )

@@ -1,4 +1,3 @@
-
 package br.com.enali.model
 
 import jakarta.persistence.*
@@ -18,7 +17,7 @@ data class Cliente(
     @field:Column(nullable = false, unique = true, length = 150)
     val email: String,
 
-    @field:Column(nullable = false, length = 100)
+    @field:Column(nullable = false, length = 254)
     val senha: String,
 
     @field:Column(nullable = false, unique = true, length = 11)

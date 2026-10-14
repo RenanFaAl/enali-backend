@@ -1,0 +1,21 @@
+### Cadastrar cliente
+POST http://localhost:8080/auth/cliente/signup
+Content-Type: application/json
+
+{
+    "nome": "Cliente Teste",
+    "email": "cliente@teste.com",
+    "senha": "Cliente@123",
+    "cpf": "12345678901",
+    "dataNascimento": "2000-05-15"
+}
+
+
+### Login de cliente
+POST http://localhost:8080/auth/cliente/signin
+Content-Type: application/json
+
+{
+    "email": "cliente@teste.com",
+    "senha": "Cliente@123"
+}
