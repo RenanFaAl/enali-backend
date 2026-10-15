@@ -1,0 +1,49 @@
+
+@baseUrl = http://localhost:8080
+@token = COLE_SEU_TOKEN_AQUI
+@produtoId = 1
+@estoqueId = 1
+
+### Cadastrar estoque
+POST {{baseUrl}}/estoques
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "produtoId": {{produtoId}},
+    "quantidadeDisponivel": 50,
+    "quantidadeReservada": 5,
+    "estoqueMinimo": 10,
+    "localizacao": "Prateleira A3",
+    "ativo": true
+}
+
+### Listar estoques
+GET {{baseUrl}}/estoques
+Authorization: Bearer {{token}}
+
+### Buscar estoque por ID
+GET {{baseUrl}}/estoques/{{estoqueId}}
+Authorization: Bearer {{token}}
+
+### Buscar por localização
+GET {{baseUrl}}/estoques/buscar?localizacao=Prateleira
+Authorization: Bearer {{token}}
+
+### Atualizar estoque
+PUT {{baseUrl}}/estoques/{{estoqueId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "produtoId": {{produtoId}},
+    "quantidadeDisponivel": 30,
+    "quantidadeReservada": 3,
+    "estoqueMinimo": 10,
+    "localizacao": "Prateleira B2",
+    "ativo": true
+}
+
+### Excluir estoque
+DELETE {{baseUrl}}/estoques/{{estoqueId}}
+Authorization: Bearer {{token}}
