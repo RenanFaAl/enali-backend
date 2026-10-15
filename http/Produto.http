@@ -1,0 +1,46 @@
+
+@baseUrl = http://localhost:8080
+@token = COLE_SEU_TOKEN_AQUI
+@produtoId = 1
+
+### Cadastrar produto
+POST {{baseUrl}}/produtos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "nome": "Caneca personalizada",
+    "descricao": "Caneca de porcelana personalizada",
+    "preco": 35.90,
+    "disponivel": true,
+    "desconto": 10.0
+}
+
+### Listar produtos
+GET {{baseUrl}}/produtos
+Authorization: Bearer {{token}}
+
+### Buscar produto por ID
+GET {{baseUrl}}/produtos/{{produtoId}}
+Authorization: Bearer {{token}}
+
+### Buscar produto por nome
+GET {{baseUrl}}/produtos/buscar?nome=caneca
+Authorization: Bearer {{token}}
+
+### Atualizar produto
+PUT {{baseUrl}}/produtos/{{produtoId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "nome": "Caneca personalizada atualizada",
+    "descricao": "Caneca de porcelana com estampa personalizada",
+    "preco": 39.90,
+    "disponivel": true,
+    "desconto": 5.0
+}
+
+### Excluir produto
+DELETE {{baseUrl}}/produtos/{{produtoId}}
+Authorization: Bearer {{token}}
