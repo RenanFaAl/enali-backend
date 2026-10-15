@@ -11,7 +11,7 @@ GET http://localhost:8080/materiais/1
 Authorization: Bearer TOKEN
 
 ### Buscar materiais por nome
-GET http://localhost:8080/materiais/buscar/nome?nome=algodao
+GET http://localhost:8080/materiais/buscar/nome?nome=algodão
 Authorization: Bearer TOKEN
 
 ### Criar material

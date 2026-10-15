@@ -94,6 +94,18 @@ class SecurityConfig(
                     "/pedidos/*/cancelar"
                 ).hasAnyRole("CLIENTE", "ADMIN_MASTER", "ADMIN_COMUM")
 
+                // Materiais: acesso total (visualizar, criar, atualizar, alterar disponibilidade e excluir) restrito apenas aos administradores
+                it.requestMatchers(
+                    "/materiais",
+                    "/materiais/**"
+                ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM")
+
+                // Fornecedores: acesso total (visualizar, criar, atualizar, alterar status e excluir) restrito apenas aos administradores
+                it.requestMatchers(
+                    "/fornecedores",
+                    "/fornecedores/**"
+                ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM")
+
                 // Qualquer outra rota exige autenticação
                 it.anyRequest().authenticated()
             }
