@@ -38,17 +38,11 @@ class SecurityConfig(
                     "/clientes/me/**"
                 ).hasRole("CLIENTE")
 
-                // Clientes: alteração de status permitida aos administradores
-                it.requestMatchers(
-                    HttpMethod.PATCH,
-                    "/clientes/*/ativo"
-                ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM")
-
-                // Clientes: gerenciamento exclusivo do ADMIN_MASTER
+                // Clientes: gerenciamento completo permitido aos administradores
                 it.requestMatchers(
                     "/clientes",
                     "/clientes/**"
-                ).hasRole("ADMIN_MASTER")
+                ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM")
 
                 // Administradores: área pessoal
                 it.requestMatchers(
@@ -105,7 +99,7 @@ class SecurityConfig(
                     "/fornecedores",
                     "/fornecedores/**"
                 ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM")
-                  
+
                 // Produtos: visualização (listagem, por ID e busca) permitida para clientes e administradores
                 it.requestMatchers(
                     HttpMethod.GET,
@@ -119,13 +113,13 @@ class SecurityConfig(
                     HttpMethod.POST,
                     "/produtos"
                 ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM")
-                
+
                 // Produtos: atualização exclusivas para administradores
                 it.requestMatchers(
                     HttpMethod.PUT,
                     "/produtos/**"
                 ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM")
-                
+
                 // Produtos: exclusão exclusivas para administradores
                 it.requestMatchers(
                     HttpMethod.DELETE,
