@@ -1,0 +1,54 @@
+### Listar materiais
+GET http://localhost:8080/materiais
+Authorization: Bearer TOKEN
+
+### Listar materiais disponíveis
+GET http://localhost:8080/materiais/disponiveis
+Authorization: Bearer TOKEN
+
+### Buscar material por ID
+GET http://localhost:8080/materiais/1
+Authorization: Bearer TOKEN
+
+### Buscar materiais por nome
+GET http://localhost:8080/materiais/buscar/nome?nome=algodao
+Authorization: Bearer TOKEN
+
+### Criar material
+POST http://localhost:8080/materiais
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "nome": "Tecido algodão",
+  "descricao": "Rolo de tecido 100% algodão, cor branca",
+  "quantidade": 50,
+  "custo": 39.90,
+  "disponivel": true
+}
+
+### Atualizar material
+PUT http://localhost:8080/materiais/1
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "nome": "Tecido algodão premium",
+  "descricao": "Rolo de tecido 100% algodão, cor branca",
+  "quantidade": 40,
+  "custo": 45.50,
+  "disponivel": true
+}
+
+### Alterar disponibilidade do material
+PATCH http://localhost:8080/materiais/1/disponivel
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "disponivel": false
+}
+
+### Deletar material
+DELETE http://localhost:8080/materiais/1
+Authorization: Bearer TOKEN
