@@ -94,6 +94,18 @@ class SecurityConfig(
                     "/pedidos/*/cancelar"
                 ).hasAnyRole("CLIENTE", "ADMIN_MASTER", "ADMIN_COMUM")
 
+                // Materiais: acesso total (visualizar, criar, atualizar, alterar disponibilidade e excluir) restrito apenas aos administradores
+                it.requestMatchers(
+                    "/materiais",
+                    "/materiais/**"
+                ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM")
+
+                // Fornecedores: acesso total (visualizar, criar, atualizar, alterar status e excluir) restrito apenas aos administradores
+                it.requestMatchers(
+                    "/fornecedores",
+                    "/fornecedores/**"
+                ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM")
+                  
                 // Produtos: visualização (listagem, por ID e busca) permitida para clientes e administradores
                 it.requestMatchers(
                     HttpMethod.GET,
@@ -102,17 +114,19 @@ class SecurityConfig(
                     "/produtos/buscar"
                 ).hasAnyRole("CLIENTE", "ADMIN_MASTER", "ADMIN_COMUM")
 
-                // Produtos: criação, atualização e exclusão exclusivas para administradores
+                // Produtos: criação exclusivas para administradores
                 it.requestMatchers(
                     HttpMethod.POST,
                     "/produtos"
                 ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM")
-
+                
+                // Produtos: atualização exclusivas para administradores
                 it.requestMatchers(
                     HttpMethod.PUT,
                     "/produtos/**"
                 ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM")
-
+                
+                // Produtos: exclusão exclusivas para administradores
                 it.requestMatchers(
                     HttpMethod.DELETE,
                     "/produtos/**"

@@ -1,0 +1,52 @@
+### Listar fornecedores
+GET http://localhost:8080/fornecedores
+Authorization: Bearer TOKEN
+
+### Buscar fornecedor por ID
+GET http://localhost:8080/fornecedores/1
+Authorization: Bearer TOKEN
+
+### Buscar fornecedor por CNPJ
+GET http://localhost:8080/fornecedores/buscar/cnpj?cnpj=12345678000190
+Authorization: Bearer TOKEN
+
+### Buscar fornecedores por nome
+GET http://localhost:8080/fornecedores/buscar/nome?nome=tecidos
+Authorization: Bearer TOKEN
+
+### Criar fornecedor
+POST http://localhost:8080/fornecedores
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "nome": "Tecidos Brasil LTDA",
+  "cnpj": "12.345.678/0001-90",
+  "email": "contato@tecidosbrasil.com.br",
+  "telefone": "(11) 91234-5678"
+}
+
+### Atualizar fornecedor
+PUT http://localhost:8080/fornecedores/1
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "nome": "Tecidos Brasil Comércio LTDA",
+  "cnpj": "12.345.678/0001-90",
+  "email": "vendas@tecidosbrasil.com.br",
+  "telefone": "(11) 3456-7890"
+}
+
+### Ativar/desativar fornecedor
+PATCH http://localhost:8080/fornecedores/1/ativo
+Authorization: Bearer TOKEN
+Content-Type: application/json
+
+{
+  "ativo": false
+}
+
+### Deletar fornecedor
+DELETE http://localhost:8080/fornecedores/1
+Authorization: Bearer TOKEN
