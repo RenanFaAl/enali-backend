@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:8080
-@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJndWlsaGVybWVAdGVzdGUuY29tIiwiaWQiOjEsInRpcG9Vc3VhcmlvIjoiQURNSU5JU1RSQURPUiIsIm5pdmVsQWNlc3NvIjoiQURNSU5fTUFTVEVSIiwiaWF0IjoxNzk0NTMyNzg2LCJleHAiOjE3OTQ1MzYzODZ9.AX5bSOml9A5s5eGquPiV64s3bMDQVyy-l1FyL0pKfZg
+@token = TOKEN
 
 ### Listar todos os endereços (Admin)
 GET {{baseUrl}}/enderecos

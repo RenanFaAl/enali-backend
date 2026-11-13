@@ -54,6 +54,17 @@ class EstoqueService(
 
         return mapper.toResponse(estoque)
     }
+    
+    @Transactional(readOnly = true)
+    fun buscarPorProdutoId(produtoId: Long): EstoqueResponseDTO {
+        val estoque = repository.findByProdutoId(produtoId).orElseThrow {
+            ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Estoque não cadastrado para o produto com ID $produtoId."
+            )
+        }
+        return mapper.toResponse(estoque)
+    }
 
     @Transactional(readOnly = true)
     fun buscarPorLocalizacao(

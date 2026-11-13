@@ -6,10 +6,21 @@ import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.server.ResponseStatusException
 
 @RestControllerAdvice
 class ApplicationExceptionHandlerController {
 
+    @ExceptionHandler(ResponseStatusException::class)
+    fun handleResponseStatusException(
+        ex: ResponseStatusException
+    ): ResponseEntity<Map<String, String>> {
+        val erro = mapOf(
+            "erro" to (ex.reason ?: "Erro na requisição")
+        )
+        return ResponseEntity.status(ex.statusCode).body(erro)
+    }
+    
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgumentException(
         ex: IllegalArgumentException

@@ -10,9 +10,11 @@ import br.com.enali.repository.ClienteRepository
 import br.com.enali.repository.EnderecoRepository
 import br.com.enali.repository.PedidoRepository
 import br.com.enali.repository.ProdutoRepository
+import br.com.enali.repository.EstoqueRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
+import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -23,6 +25,7 @@ class PedidoService(
     private val clienteRepository: ClienteRepository,
     private val enderecoRepository: EnderecoRepository,
     private val produtoRepository: ProdutoRepository,
+    private val estoqueRepository: EstoqueRepository,
     private val mapper: PedidoMapper
 ) {
 
@@ -37,7 +40,28 @@ class PedidoService(
 
         val idsProdutos = request.itens.map { item -> item.produtoId }
         val produtosMap = produtoRepository.findAllById(idsProdutos).associateBy { it.id }
+        
+        for (itemDto in request.itens) {
+            val produto = produtosMap[itemDto.produtoId]
+                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Produto com ID ${itemDto.produtoId} não encontrado.")
 
+            val estoque = estoqueRepository.findByProdutoId(itemDto.produtoId).orElseThrow {
+                ResponseStatusException(HttpStatus.BAD_REQUEST, "O produto '${produto.nome}' não possui registro de estoque cadastrado.")
+            }
+
+            if (estoque.quantidadeDisponivel < itemDto.quantidade) {
+                throw ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Estoque insuficiente para o produto '${produto.nome}'. Quantidade solicitada: ${itemDto.quantidade}, disponível em estoque: ${estoque.quantidadeDisponivel}."
+                )
+            }
+
+            val estoqueAtualizado = estoque.copy(
+                quantidadeDisponivel = estoque.quantidadeDisponivel - itemDto.quantidade
+            )
+            estoqueRepository.save(estoqueAtualizado)
+        }
+        
         val dataAtual = LocalDate.now()
         val prefixo = dataAtual.format(DateTimeFormatter.BASIC_ISO_DATE)
         val pedidosDoDia = repository.findByNumeroPedidoStartingWith(prefixo)
@@ -80,6 +104,8 @@ class PedidoService(
         if (pedido.status.equals("CANCELADO", ignoreCase = true)) {
             throw ResponseStatusException(HttpStatus.CONFLICT, "Este pedido já foi cancelado.")
         }
+
+        devolverItensAoEstoque(pedido)
 
         val pedidoCancelado = pedido.copy(status = "CANCELADO")
         return mapper.toResponse(repository.save(pedidoCancelado))
@@ -141,6 +167,8 @@ class PedidoService(
             )
         }
 
+        devolverItensAoEstoque(pedido)
+
         val pedidoCancelado = pedido.copy(
             status = "CANCELADO"
         )
@@ -157,6 +185,17 @@ class PedidoService(
         }
 
         repository.deleteById(id)
+    }
+    
+    private fun devolverItensAoEstoque(pedido: Pedido) {
+        for (item in pedido.itens) {
+            estoqueRepository.findByProdutoId(item.produtoId).ifPresent { estoque ->
+                val estoqueDevolvido = estoque.copy(
+                    quantidadeDisponivel = estoque.quantidadeDisponivel + item.quantidade
+                )
+                estoqueRepository.save(estoqueDevolvido)
+            }
+        }
     }
 
 }

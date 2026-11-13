@@ -1,7 +1,7 @@
 
 @baseUrl = http://localhost:8080
-@token = COLE_SEU_TOKEN_AQUI
-@produtoId = 1
+@token = TOKEN
+@produtoId = 2
 @estoqueId = 1
 
 ### Cadastrar estoque
@@ -11,9 +11,9 @@ Content-Type: application/json
 
 {
     "produtoId": {{produtoId}},
-    "quantidadeDisponivel": 50,
-    "quantidadeReservada": 5,
-    "estoqueMinimo": 10,
+    "quantidadeDisponivel": 1,
+    "quantidadeReservada": 0,
+    "estoqueMinimo": 1,
     "localizacao": "Prateleira A3",
     "ativo": true
 }
@@ -24,6 +24,10 @@ Authorization: Bearer {{token}}
 
 ### Buscar estoque por ID
 GET {{baseUrl}}/estoques/{{estoqueId}}
+Authorization: Bearer {{token}}
+
+### Buscar estoque pelo ID do Produto (Usado no Frontend e para conferência)
+GET {{baseUrl}}/estoques/produto/{{produtoId}}
 Authorization: Bearer {{token}}
 
 ### Buscar por localização
