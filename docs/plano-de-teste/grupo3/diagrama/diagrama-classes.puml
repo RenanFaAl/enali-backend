@@ -1,0 +1,341 @@
+@startuml
+!pragma layout smetana
+set separator none
+hide empty members
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+skinparam linetype ortho
+left to right direction
+title UC05 - Realizar Pedido: classes de produção e de teste (engenharia reversa do bytecode)
+
+package "Produção (src/main/kotlin)" {
+  package "br.com.enali.service" as main_service {
+    class "PedidoService" as PedidoService {
+      -repository: PedidoRepository
+      -mapper: PedidoMapper
+      -clienteRepository: ClienteRepository
+      -enderecoRepository: EnderecoRepository
+      -estoqueRepository: EstoqueRepository
+      +criar(Long, PedidoRequest): PedidoResponse
+      -somarQuantidadesPorProduto(List<ItemPedidoRequest>): Map<Long, Integer>
+      -gerarNumeroPedido(): String
+      +listarTodos(): List<PedidoResponse>
+      +buscarPorId(Long): PedidoResponse
+      +buscarPorNumero(String): List<PedidoResponse>
+      +cancelar(Long): PedidoResponse
+      +remover(Long)
+    }
+  }
+  package "br.com.enali.mapper" as main_mapper {
+    class "PedidoMapper" as PedidoMapper {
+      +toEntity(PedidoRequest, String, Cliente, Endereco, List<ItemPedido>): Pedido
+      +toResponse(Pedido): PedidoResponse
+    }
+  }
+  package "br.com.enali.dto" as main_dto {
+    class "PedidoRequest" as PedidoRequest {
+      -enderecoId: Long
+      -itens: List<ItemPedidoRequest>
+      -observacoes: String
+    }
+    class "ItemPedidoRequest" as ItemPedidoRequest {
+      -produtoId: Long
+      -quantidade: Int
+    }
+    class "PedidoResponse" as PedidoResponse {
+      -id: Long
+      -numeroPedido: String
+      -valorTotal: Double
+      -dataPedido: LocalDateTime
+      -status: String
+      -observacoes: String
+      -clienteId: Long
+      -itens: List<ItemPedidoResponse>
+      -cepEntrega: String
+      -ruaEntrega: String
+      -numeroEntrega: String
+      -bairroEntrega: String
+      -cidadeEntrega: String
+      -estadoEntrega: String
+    }
+    class "ItemPedidoResponse" as ItemPedidoResponse {
+      -produtoId: Long
+      -produtoNome: String
+      -quantidade: Int
+      -precoUnitario: Double
+    }
+  }
+  package "br.com.enali.model" as main_model {
+    class "Pedido" as Pedido {
+      -id: Long
+      -numeroPedido: String
+      -valorTotal: Double
+      -dataPedido: LocalDateTime
+      -status: String
+      -observacoes: String
+      -cliente: Cliente
+      -itens: List<ItemPedido>
+      -cepEntrega: String
+      -ruaEntrega: String
+      -numeroEntrega: String
+      -bairroEntrega: String
+      -cidadeEntrega: String
+      -estadoEntrega: String
+      +calcularTotal(): Double
+    }
+    class "ItemPedido" as ItemPedido {
+      -id: Long
+      -produto: Produto
+      -quantidade: Int
+      -precoUnitario: Double
+      +calcularSubtotal(): BigDecimal
+    }
+    class "Estoque" as Estoque {
+      -id: Long
+      -produto: Produto
+      -quantidadeDisponivel: Int
+      -quantidadeReservada: Int
+      -estoqueMinimo: Int
+      -localizacao: String
+      -ativo: Boolean
+      -dataAtualizacao: LocalDateTime
+      +atualizarData()
+      +possuiDisponibilidade(Int): Boolean
+      +reservar(Int): Estoque
+      +liberar(Int): Estoque
+    }
+    class "Produto" as Produto {
+      -id: Long
+      -nome: String
+      -descricao: String
+      -preco: BigDecimal
+      -disponivel: Boolean
+      -desconto: Double
+    }
+    class "Cliente" as Cliente {
+      -id: Long
+      -nome: String
+      -email: String
+      -senha: String
+      -cpf: String
+      -dataNascimento: LocalDate
+      -ativo: Boolean
+    }
+    class "Endereco" as Endereco {
+      -id: Long
+      -rua: String
+      -numero: String
+      -complemento: String
+      -bairro: String
+      -cidade: String
+      -estado: String
+      -siglaEstado: String
+      -cep: String
+      -pais: String
+      -referencia: String
+      -principal: Boolean
+      -ativo: Boolean
+      -dataCadastro: LocalDateTime
+      -cliente: Cliente
+      +antesDeSalvar()
+    }
+  }
+  package "br.com.enali.repository" as main_repository {
+    interface "PedidoRepository" as PedidoRepository {
+      +findByNumeroPedidoStartingWith(String): List<Pedido>
+      +buscarPorNumero(String): List<Pedido>
+    }
+    interface "ClienteRepository" as ClienteRepository {
+      +findByEmail(String): Cliente
+      +findByIdAndAtivoTrue(Long): Cliente
+      +existsByEmail(String): Boolean
+      +findByCpf(String): Cliente
+      +existsByCpf(String): Boolean
+      +buscarPorNome(String): List<Cliente>
+    }
+    interface "EnderecoRepository" as EnderecoRepository {
+      +findByIdAndClienteIdAndAtivoTrue(Long, Long): Endereco
+      +buscarPorRua(String): List<Endereco>
+      +buscarPorBairro(String): List<Endereco>
+      +buscarPorCidade(String): List<Endereco>
+      +buscarPorSiglaEstado(String): List<Endereco>
+    }
+    interface "EstoqueRepository" as EstoqueRepository {
+      +findFirstByProdutoIdOrderByIdAsc(Long): Estoque
+      +buscarPorLocalizacao(String): List<Estoque>
+    }
+  }
+}
+
+package "Teste (src/test/kotlin)" {
+  package "br.com.enali.service" as test_service {
+    class "PedidoServiceTest" as PedidoServiceTest <<teste>> {
+      +pedidoRepository: PedidoRepository
+      +clienteRepository: ClienteRepository
+      +enderecoRepository: EnderecoRepository
+      +estoqueRepository: EstoqueRepository
+      +estoquesCaptor: ArgumentCaptor<Iterable<Estoque>>
+      -service: PedidoService
+      -cliente: Cliente
+      -endereco: Endereco
+      -prefixoHoje: String
+      -vaso: Produto
+      -cesta: Produto
+      -prato: Produto
+      +criarService()
+      -clienteEEnderecoValidos()
+      -noEstoque(Estoque)
+      -bancoSalvaPedido()
+      -assertErro(HttpStatus, String, Function0<Unit>)
+      -assertNadaGravado()
+      -estoquesReservados(): List<Estoque>
+    }
+    class "PedidoServiceTest.CaminhosDoGfc" as PedidoServiceTest_CaminhosDoGfc <<teste>> {
+      +CT01 (C1) - pedido com um item e registrado como PENDENTE e reserva...()
+      +CT02 (C2) RN17 - cliente inexistente ou inativo nao pode realizar p...()
+      +CT03 (C3) RN18 - endereco que nao e do cliente ou esta inativo e re...()
+      +CT04 (C4) - pedido sem itens e rejeitado()
+      +CT05 (C5) - produto inexistente e rejeitado()
+      +CT06 (C6) - produto desativado durante a compra pede remocao do car...()
+      +CT07 (C7) RN26 - estoque insuficiente impede o pedido e informa o p...()
+      +CT08 (C8) - falha no calculo (total zero) aborta o pedido()
+      +CT09 (C9) - pedido com dois produtos soma o total e reserva os dois...()
+    }
+    class "PedidoServiceTest.ValorLimiteEParticoes" as PedidoServiceTest_ValorLimiteEParticoes <<teste>> {
+      +CT10 RN26 RN54 - quantidade igual ao saldo (limite) e aceita e zera...()
+      +CT11 RN26 - quantidade uma unidade acima do saldo (limite) e rejeitada()
+      +CT12 RN26 - lista todos os produtos sem estoque e nao reserva nenhum()
+      +CT13 RN26 - estoque inativo conta como indisponivel()
+      +CT14 RN26 - mesmo produto repetido no carrinho tem as quantidades s...()
+    }
+    class "PedidoServiceTest.RegistroDoPedido" as PedidoServiceTest_RegistroDoPedido <<teste>> {
+      +CT15 - falha ao gravar o pedido nao faz baixa no estoque (fluxo de ...()
+      +CT16 - pedido e gravado antes da reserva do estoque()
+      +CT17 - numero do pedido segue a sequencia do dia()
+    }
+    class "PedidoServiceTest.Cancelamento" as PedidoServiceTest_Cancelamento <<teste>> {
+      -pedidoComVaso(String): Pedido
+      +CT18 - cancelar devolve a reserva ao estoque e marca CANCELADO()
+      +CT19 - pedido ja cancelado nao pode ser cancelado de novo()
+      +CT20 - cancelar pedido inexistente retorna 404()
+    }
+  }
+  package "br.com.enali.mapper" as test_mapper {
+    class "PedidoMapperTest" as PedidoMapperTest <<teste>> {
+      -mapper: PedidoMapper
+      +toEntity cria pedido PENDENTE com cliente, itens e valor total calc...()
+      +RN27 e RN28 - endereco de entrega e copiado campo a campo para o pe...()
+      +toResponse expoe itens, cliente e endereco de entrega()
+    }
+  }
+  package "br.com.enali.model" as test_model {
+    class "PedidoTest" as PedidoTest <<teste>> {
+      -pedidoCom(ItemPedido...): Pedido
+      +calcularTotal soma os subtotais de todos os itens()
+      +calcularTotal nao acumula erro de ponto flutuante (3 x 0,10 = 0,30)()
+      +calcularTotal de pedido sem itens e zero()
+    }
+    class "ItemPedidoTest" as ItemPedidoTest <<teste>> {
+      +RN27 - item guarda produto, quantidade e preco sem desconto()
+      +preco unitario aplica o desconto percentual do produto()
+      +preco unitario e arredondado para duas casas (9,99 com 15 porcento ...()
+      +desconto de 100 porcento resulta em preco zero()
+      +subtotal e quantidade vezes preco unitario()
+    }
+    class "EstoqueTest" as EstoqueTest <<teste>> {
+      +RN26 - quantidade igual ao saldo esta disponivel (limite superior v...()
+      +RN26 - quantidade uma unidade acima do saldo nao esta disponivel (l...()
+      +RN26 - estoque inativo nunca esta disponivel()
+      +reservar move a quantidade do disponivel para o reservado()
+      +RN54 - reservar todo o saldo zera o disponivel sem ficar negativo()
+      +RN54 - reservar acima do saldo e rejeitado()
+      +reservar quantidade zero e rejeitado()
+      +liberar devolve a reserva para o disponivel()
+      +RN54 - liberar mais do que o reservado e rejeitado()
+      +liberar quantidade zero e rejeitado()
+    }
+  }
+  package "br.com.enali.repository" as test_repository {
+    class "PedidoPersistenciaTest" as PedidoPersistenciaTest <<teste>> {
+      -service: PedidoService
+      -clienteRepository: ClienteRepository
+      -enderecoRepository: EnderecoRepository
+      -produtoRepository: ProdutoRepository
+      -estoqueRepository: EstoqueRepository
+      -pedidoRepository: PedidoRepository
+      -entityManager: EntityManager
+      -cliente: Cliente
+      -endereco: Endereco
+      -vaso: Produto
+      +gravarDados()
+      -limparCache()
+      -realizarPedido(Int): PedidoResponse
+      +RN27 - pedido e gravado com cliente, itens e valores, e o estoque f...()
+      +RN28 - alterar o endereco do cliente nao altera o endereco gravado ...()
+      +cancelar grava CANCELADO e devolve a reserva ao estoque()
+      +RN18 - endereco so e encontrado para o proprio cliente()
+      +RN17 - cliente inativo nao e encontrado para realizar pedido()
+    }
+  }
+  package "br.com.enali" as test_raiz {
+    class "Fixtures" as Fixtures {
+      +cliente(Long, Boolean): Cliente
+      +endereco(Long, Cliente): Endereco
+      +produto(Long, String, String, Double, Boolean): Produto
+      +estoque(Produto, Int, Int, Boolean): Estoque
+      +pedidoRequest(Pair<Long, Integer>[], Long): PedidoRequest
+    }
+  }
+}
+
+ClienteRepository ..> Cliente : <<JpaRepository>>
+Endereco --> Cliente : cliente
+EnderecoRepository ..> Endereco : <<JpaRepository>>
+Estoque --> Produto : produto
+EstoqueRepository ..> Estoque : <<JpaRepository>>
+EstoqueTest ..> Estoque : <<testa>>
+EstoqueTest ..> Fixtures : <<usa>>
+ItemPedido --> Produto : produto
+ItemPedidoTest ..> Fixtures : <<usa>>
+ItemPedidoTest ..> ItemPedido : <<testa>>
+Pedido "1" *-- "*" ItemPedido : itens
+Pedido --> Cliente : cliente
+PedidoMapper ..> Cliente
+PedidoMapper ..> Endereco
+PedidoMapper ..> ItemPedido
+PedidoMapper ..> Pedido
+PedidoMapper ..> PedidoRequest
+PedidoMapper ..> PedidoResponse
+PedidoMapperTest --> PedidoMapper : mapper
+PedidoMapperTest ..> Fixtures : <<usa>>
+PedidoPersistenciaTest --> ClienteRepository : clienteRepository
+PedidoPersistenciaTest --> EnderecoRepository : enderecoRepository
+PedidoPersistenciaTest --> EstoqueRepository : estoqueRepository
+PedidoPersistenciaTest --> PedidoRepository : pedidoRepository
+PedidoPersistenciaTest --> PedidoService : service
+PedidoPersistenciaTest ..> Fixtures : <<usa>>
+PedidoRepository ..> Pedido : <<JpaRepository>>
+PedidoRequest "1" *-- "*" ItemPedidoRequest : itens
+PedidoResponse "1" *-- "*" ItemPedidoResponse : itens
+PedidoService --> ClienteRepository : clienteRepository
+PedidoService --> EnderecoRepository : enderecoRepository
+PedidoService --> EstoqueRepository : estoqueRepository
+PedidoService --> PedidoMapper : mapper
+PedidoService --> PedidoRepository : repository
+PedidoService ..> ItemPedidoRequest
+PedidoService ..> PedidoRequest
+PedidoService ..> PedidoResponse
+PedidoServiceTest +-- PedidoServiceTest_CaminhosDoGfc
+PedidoServiceTest +-- PedidoServiceTest_Cancelamento
+PedidoServiceTest +-- PedidoServiceTest_RegistroDoPedido
+PedidoServiceTest +-- PedidoServiceTest_ValorLimiteEParticoes
+PedidoServiceTest --> PedidoService : service
+PedidoServiceTest ..> ClienteRepository : <<mock>>
+PedidoServiceTest ..> EnderecoRepository : <<mock>>
+PedidoServiceTest ..> EstoqueRepository : <<mock>>
+PedidoServiceTest ..> Fixtures : <<usa>>
+PedidoServiceTest ..> PedidoRepository : <<mock>>
+PedidoTest ..> Fixtures : <<usa>>
+PedidoTest ..> Pedido : <<testa>>
+@enduml

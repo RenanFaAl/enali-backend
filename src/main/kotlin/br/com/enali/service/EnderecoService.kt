@@ -1,12 +1,14 @@
 package br.com.enali.service
 
 import br.com.enali.model.Endereco
+import br.com.enali.repository.ClienteRepository
 import br.com.enali.repository.EnderecoRepository
 import org.springframework.stereotype.Service
 
 @Service
 class EnderecoService(
-    private val enderecoRepository: EnderecoRepository
+    private val enderecoRepository: EnderecoRepository,
+    private val clienteRepository: ClienteRepository
 ) {
 
     fun listarTodos(): List<Endereco> {
@@ -33,8 +35,9 @@ class EnderecoService(
         return enderecoRepository.buscarPorSiglaEstado(estado)
     }
 
-    fun salvar(endereco: Endereco): Endereco {
-        return enderecoRepository.save(endereco)
+    fun salvar(endereco: Endereco, clienteId: Long? = null): Endereco {
+        val cliente = clienteId?.let { clienteRepository.getReferenceById(it) }
+        return enderecoRepository.save(endereco.copy(cliente = cliente))
     }
 
 
@@ -45,7 +48,8 @@ class EnderecoService(
         val enderecoParaSalvar = enderecoAtualizado.copy(
             id = enderecoExistente.id,
             ativo = enderecoExistente.ativo,
-            dataCadastro = enderecoExistente.dataCadastro
+            dataCadastro = enderecoExistente.dataCadastro,
+            cliente = enderecoExistente.cliente
         )
 
         return enderecoRepository.save(enderecoParaSalvar)

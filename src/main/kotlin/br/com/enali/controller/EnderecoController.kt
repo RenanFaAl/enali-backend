@@ -1,11 +1,13 @@
 package br.com.enali.controller
 
+import br.com.enali.config.UsuarioAutenticado
 import br.com.enali.dto.EnderecoRequestDTO
 import br.com.enali.dto.EnderecoResponseDTO
 import br.com.enali.mapper.EnderecoMapper
 import br.com.enali.service.EnderecoService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -60,10 +62,12 @@ class EnderecoController(
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun salvar(
+        @AuthenticationPrincipal usuario: UsuarioAutenticado?,
         @Valid @RequestBody dto: EnderecoRequestDTO
     ): EnderecoResponseDTO {
         val endereco = EnderecoMapper.toModel(dto)
-        val enderecoSalvo = enderecoService.salvar(endereco)
+        val clienteId = usuario?.takeIf { it.tipoUsuario == "CLIENTE" }?.id
+        val enderecoSalvo = enderecoService.salvar(endereco, clienteId)
 
         return EnderecoMapper.toDTO(enderecoSalvo)
     }

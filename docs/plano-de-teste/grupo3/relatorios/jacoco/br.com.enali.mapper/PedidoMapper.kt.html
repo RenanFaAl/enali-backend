@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PedidoMapper.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">enali</a> &gt; <a href="index.source.html" class="el_package">br.com.enali.mapper</a> &gt; <span class="el_source">PedidoMapper.kt</span></div><h1>PedidoMapper.kt</h1><pre class="source lang-java linenums">package br.com.enali.mapper
+
+import br.com.enali.dto.ItemPedidoResponse
+import br.com.enali.dto.PedidoRequest
+import br.com.enali.dto.PedidoResponse
+import br.com.enali.model.Cliente
+import br.com.enali.model.Endereco
+import br.com.enali.model.ItemPedido
+import br.com.enali.model.Pedido
+import org.springframework.stereotype.Component
+import java.time.LocalDateTime
+
+<span class="fc" id="L13">@Component</span>
+class PedidoMapper {
+
+    fun toEntity(
+        request: PedidoRequest,
+        numeroPedido: String,
+        cliente: Cliente,
+        endereco: Endereco,
+        itens: List&lt;ItemPedido&gt;
+    ): Pedido {
+<span class="fc" id="L23">        val pedido = Pedido(</span>
+<span class="fc" id="L24">            numeroPedido = numeroPedido,</span>
+<span class="fc" id="L25">            valorTotal = 0.0,</span>
+<span class="fc" id="L26">            dataPedido = LocalDateTime.now(),</span>
+<span class="fc" id="L27">            status = &quot;PENDENTE&quot;,</span>
+<span class="fc" id="L28">            observacoes = request.observacoes,</span>
+<span class="fc" id="L29">            cliente = cliente,</span>
+<span class="fc" id="L30">            itens = itens,</span>
+            // RN28: copia o endereço em vez de referenciá-lo
+<span class="fc" id="L32">            cepEntrega = endereco.cep,</span>
+<span class="fc" id="L33">            ruaEntrega = endereco.rua,</span>
+<span class="fc" id="L34">            numeroEntrega = endereco.numero,</span>
+<span class="fc" id="L35">            bairroEntrega = endereco.bairro,</span>
+<span class="fc" id="L36">            cidadeEntrega = endereco.cidade,</span>
+<span class="fc" id="L37">            estadoEntrega = endereco.siglaEstado</span>
+        )
+
+<span class="fc" id="L40">        return pedido.copy(valorTotal = pedido.calcularTotal())</span>
+    }
+
+    fun toResponse(pedido: Pedido): PedidoResponse {
+<span class="fc" id="L44">        return PedidoResponse(</span>
+<span class="fc" id="L45">            id = pedido.id,</span>
+<span class="fc" id="L46">            numeroPedido = pedido.numeroPedido,</span>
+<span class="fc" id="L47">            valorTotal = pedido.valorTotal,</span>
+<span class="fc" id="L48">            dataPedido = pedido.dataPedido,</span>
+<span class="fc" id="L49">            status = pedido.status,</span>
+<span class="fc" id="L50">            observacoes = pedido.observacoes,</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">            clienteId = pedido.cliente?.id,</span>
+<span class="fc" id="L52">            itens = pedido.itens.map {</span>
+<span class="fc" id="L53">                ItemPedidoResponse(</span>
+<span class="fc" id="L54">                    produtoId = it.produto.id,</span>
+<span class="fc" id="L55">                    produtoNome = it.produto.nome,</span>
+<span class="fc" id="L56">                    quantidade = it.quantidade,</span>
+<span class="fc" id="L57">                    precoUnitario = it.precoUnitario</span>
+<span class="fc" id="L58">                )</span>
+            },
+<span class="fc" id="L60">            cepEntrega = pedido.cepEntrega,</span>
+<span class="fc" id="L61">            ruaEntrega = pedido.ruaEntrega,</span>
+<span class="fc" id="L62">            numeroEntrega = pedido.numeroEntrega,</span>
+<span class="fc" id="L63">            bairroEntrega = pedido.bairroEntrega,</span>
+<span class="fc" id="L64">            cidadeEntrega = pedido.cidadeEntrega,</span>
+<span class="fc" id="L65">            estadoEntrega = pedido.estadoEntrega</span>
+        )
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

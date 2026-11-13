@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ItemPedido.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">enali</a> &gt; <a href="index.source.html" class="el_package">br.com.enali.model</a> &gt; <span class="el_source">ItemPedido.kt</span></div><h1>ItemPedido.kt</h1><pre class="source lang-java linenums">package br.com.enali.model
+
+import jakarta.persistence.*
+import java.math.BigDecimal
+import java.math.RoundingMode
+
+<span class="fc" id="L7">@Entity</span>
+@Table(name = &quot;itens_pedido&quot;)
+<span class="fc" id="L9">data class ItemPedido(</span>
+
+<span class="fc" id="L11">    @field:Id</span>
+    @field:GeneratedValue(strategy = GenerationType.IDENTITY)
+<span class="pc" id="L13">    val id: Long = 0,</span>
+
+<span class="fc" id="L15">    @field:ManyToOne(fetch = FetchType.LAZY, optional = false)</span>
+    @field:JoinColumn(name = &quot;produto_id&quot;, nullable = false)
+<span class="fc" id="L17">    val produto: Produto,</span>
+
+<span class="fc" id="L19">    @field:Column(nullable = false)</span>
+<span class="fc" id="L20">    val quantidade: Int,</span>
+
+    // Preço congelado no momento da compra (RN27), já com o desconto do produto
+<span class="fc" id="L23">    @field:Column(name = &quot;preco_unitario&quot;, nullable = false)</span>
+<span class="fc" id="L24">    val precoUnitario: Double</span>
+<span class="fc" id="L25">) {</span>
+
+    fun calcularSubtotal(): BigDecimal {
+<span class="fc" id="L28">        return BigDecimal.valueOf(precoUnitario).multiply(BigDecimal(quantidade))</span>
+    }
+
+    companion object {
+
+        fun de(produto: Produto, quantidade: Int): ItemPedido {
+            // desconto é percentual (0 a 100), conforme ProdutoRequestDTO
+<span class="fc" id="L35">            val fator = BigDecimal.valueOf(100 - produto.desconto)</span>
+<span class="fc" id="L36">                .divide(BigDecimal(100))</span>
+<span class="fc" id="L37">            val precoUnitario = produto.preco.multiply(fator)</span>
+<span class="fc" id="L38">                .setScale(2, RoundingMode.HALF_UP)</span>
+
+<span class="fc" id="L40">            return ItemPedido(</span>
+<span class="fc" id="L41">                produto = produto,</span>
+<span class="fc" id="L42">                quantidade = quantidade,</span>
+<span class="fc" id="L43">                precoUnitario = precoUnitario.toDouble()</span>
+            )
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

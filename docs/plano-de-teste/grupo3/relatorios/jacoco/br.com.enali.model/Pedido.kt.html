@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Pedido.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">enali</a> &gt; <a href="index.source.html" class="el_package">br.com.enali.model</a> &gt; <span class="el_source">Pedido.kt</span></div><h1>Pedido.kt</h1><pre class="source lang-java linenums">
+package br.com.enali.model
+
+import jakarta.persistence.*
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.time.LocalDateTime
+
+<span class="fc" id="L9">@Entity</span>
+@Table(name = &quot;pedidos&quot;)
+<span class="fc" id="L11">data class Pedido(</span>
+
+<span class="fc" id="L13">    @field:Id</span>
+    @field:GeneratedValue(strategy = GenerationType.IDENTITY)
+<span class="fc" id="L15">    val id: Long = 0,</span>
+
+<span class="fc" id="L17">    @field:Column(name = &quot;numero_pedido&quot;, nullable = false, length = 30)</span>
+<span class="fc" id="L18">    val numeroPedido: String,</span>
+
+<span class="fc" id="L20">    @field:Column(name = &quot;valor_total&quot;, nullable = false)</span>
+<span class="fc" id="L21">    val valorTotal: Double,</span>
+
+<span class="fc" id="L23">    @field:Column(name = &quot;data_pedido&quot;, nullable = false)</span>
+<span class="fc" id="L24">    val dataPedido: LocalDateTime = LocalDateTime.now(),</span>
+
+<span class="fc" id="L26">    @field:Column(nullable = false, length = 30)</span>
+<span class="fc" id="L27">    val status: String,</span>
+
+<span class="fc" id="L29">    @field:Column(length = 500)</span>
+<span class="fc" id="L30">    val observacoes: String? = null,</span>
+
+    // Colunas abaixo são anuláveis para não quebrar pedidos já gravados antes do UC05
+<span class="fc" id="L33">    @field:ManyToOne(fetch = FetchType.LAZY)</span>
+    @field:JoinColumn(name = &quot;cliente_id&quot;)
+<span class="fc" id="L35">    val cliente: Cliente? = null,</span>
+
+<span class="fc" id="L37">    @field:OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)</span>
+    @field:JoinColumn(name = &quot;pedido_id&quot;)
+<span class="fc" id="L39">    val itens: List&lt;ItemPedido&gt; = emptyList(),</span>
+
+    // RN28: cópia do endereço de entrega; o histórico não muda se o cliente alterar o endereço
+<span class="fc" id="L42">    @field:Column(name = &quot;cep_entrega&quot;, length = 9)</span>
+<span class="fc" id="L43">    val cepEntrega: String? = null,</span>
+
+<span class="fc" id="L45">    @field:Column(name = &quot;rua_entrega&quot;, length = 150)</span>
+<span class="fc" id="L46">    val ruaEntrega: String? = null,</span>
+
+<span class="fc" id="L48">    @field:Column(name = &quot;numero_entrega&quot;, length = 20)</span>
+<span class="fc" id="L49">    val numeroEntrega: String? = null,</span>
+
+<span class="fc" id="L51">    @field:Column(name = &quot;bairro_entrega&quot;, length = 100)</span>
+<span class="fc" id="L52">    val bairroEntrega: String? = null,</span>
+
+<span class="fc" id="L54">    @field:Column(name = &quot;cidade_entrega&quot;, length = 100)</span>
+<span class="fc" id="L55">    val cidadeEntrega: String? = null,</span>
+
+<span class="fc" id="L57">    @field:Column(name = &quot;estado_entrega&quot;, length = 2)</span>
+<span class="fc" id="L58">    val estadoEntrega: String? = null</span>
+<span class="fc" id="L59">) {</span>
+
+    fun calcularTotal(): Double {
+<span class="fc" id="L62">        return itens</span>
+<span class="fc" id="L63">            .fold(BigDecimal.ZERO) { total, item -&gt; total.add(item.calcularSubtotal()) }</span>
+<span class="fc" id="L64">            .setScale(2, RoundingMode.HALF_UP)</span>
+<span class="fc" id="L65">            .toDouble()</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
