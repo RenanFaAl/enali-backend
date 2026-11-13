@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Estoque.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">enali</a> &gt; <a href="index.source.html" class="el_package">br.com.enali.model</a> &gt; <span class="el_source">Estoque.kt</span></div><h1>Estoque.kt</h1><pre class="source lang-java linenums">
+package br.com.enali.model
+
+import jakarta.persistence.*
+import java.time.LocalDateTime
+
+<span class="fc" id="L7">@Entity</span>
+@Table(name = &quot;estoques&quot;)
+<span class="fc" id="L9">data class Estoque(</span>
+
+<span class="fc" id="L11">    @field:Id</span>
+    @field:GeneratedValue(strategy = GenerationType.IDENTITY)
+<span class="fc" id="L13">    val id: Long = 0,</span>
+
+<span class="fc" id="L15">    @field:ManyToOne(fetch = FetchType.LAZY, optional = false)</span>
+    @field:JoinColumn(name = &quot;produto_id&quot;, nullable = false)
+<span class="fc" id="L17">    val produto: Produto,</span>
+
+<span class="fc" id="L19">    @field:Column(nullable = false)</span>
+<span class="fc" id="L20">    val quantidadeDisponivel: Int,</span>
+
+<span class="fc" id="L22">    @field:Column(nullable = false)</span>
+<span class="pc" id="L23">    val quantidadeReservada: Int = 0,</span>
+
+<span class="fc" id="L25">    @field:Column(nullable = false)</span>
+<span class="fc" id="L26">    val estoqueMinimo: Int = 0,</span>
+
+<span class="fc" id="L28">    @field:Column(nullable = false, length = 100)</span>
+<span class="fc" id="L29">    val localizacao: String,</span>
+
+<span class="fc" id="L31">    @field:Column(nullable = false)</span>
+<span class="pc" id="L32">    val ativo: Boolean = true,</span>
+
+<span class="fc" id="L34">    @field:Column(nullable = false)</span>
+<span class="fc" id="L35">    var dataAtualizacao: LocalDateTime = LocalDateTime.now()</span>
+<span class="fc" id="L36">) {</span>
+
+    @PrePersist
+    @PreUpdate
+    fun atualizarData() {
+<span class="fc" id="L41">        dataAtualizacao = LocalDateTime.now()</span>
+<span class="fc" id="L42">    }</span>
+
+    // RN26: verificação de disponibilidade antes de confirmar o pedido
+    fun possuiDisponibilidade(quantidade: Int): Boolean {
+<span class="fc bfc" id="L46" title="All 4 branches covered.">        return ativo &amp;&amp; quantidade &lt;= quantidadeDisponivel</span>
+    }
+
+    // Política de reserva: a quantidade pedida sai do disponível e vai para o reservado
+    fun reservar(quantidade: Int): Estoque {
+<span class="fc bfc" id="L51" title="All 4 branches covered.">        require(quantidade &gt; 0) { &quot;A quantidade deve ser maior que zero.&quot; }</span>
+        // RN54: nenhuma movimentação pode deixar o estoque negativo
+<span class="fc bfc" id="L53" title="All 4 branches covered.">        require(quantidade &lt;= quantidadeDisponivel) {</span>
+<span class="fc" id="L54">            &quot;Estoque insuficiente para o produto ${produto.nome}.&quot;</span>
+        }
+
+<span class="fc" id="L57">        return copy(</span>
+<span class="fc" id="L58">            quantidadeDisponivel = quantidadeDisponivel - quantidade,</span>
+<span class="fc" id="L59">            quantidadeReservada = quantidadeReservada + quantidade</span>
+        )
+    }
+
+    // Cancelamento devolve a reserva ao disponível
+    fun liberar(quantidade: Int): Estoque {
+<span class="fc bfc" id="L65" title="All 4 branches covered.">        require(quantidade &gt; 0) { &quot;A quantidade deve ser maior que zero.&quot; }</span>
+        // RN54: a reserva também não pode ficar negativa
+<span class="fc bfc" id="L67" title="All 4 branches covered.">        require(quantidade &lt;= quantidadeReservada) {</span>
+<span class="fc" id="L68">            &quot;Reserva insuficiente para o produto ${produto.nome}.&quot;</span>
+        }
+
+<span class="fc" id="L71">        return copy(</span>
+<span class="fc" id="L72">            quantidadeDisponivel = quantidadeDisponivel + quantidade,</span>
+<span class="fc" id="L73">            quantidadeReservada = quantidadeReservada - quantidade</span>
+        )
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

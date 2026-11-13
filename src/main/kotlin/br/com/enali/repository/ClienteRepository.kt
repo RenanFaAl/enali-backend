@@ -9,6 +9,8 @@ interface ClienteRepository : JpaRepository<Cliente, Long> {
 
     fun findByEmail(email: String): Cliente?
 
+    fun findByIdAndAtivoTrue(id: Long): Cliente?
+
     fun existsByEmail(email: String): Boolean
 
     fun findByCpf(cpf: String): Cliente?

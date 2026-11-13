@@ -7,6 +7,8 @@ import org.springframework.data.repository.query.Param
 
 interface EnderecoRepository : JpaRepository<Endereco, Long> {
 
+    fun findByIdAndClienteIdAndAtivoTrue(id: Long, clienteId: Long): Endereco?
+
     @Query(
         """
         SELECT e FROM Endereco e

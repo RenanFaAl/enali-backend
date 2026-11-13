@@ -5,6 +5,8 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.PrePersist
 import java.time.LocalDateTime
 
@@ -52,7 +54,12 @@ data class Endereco(
     val ativo: Boolean = true,
 
     @Column(nullable = false, updatable = false)
-    var dataCadastro: LocalDateTime? = null
+    var dataCadastro: LocalDateTime? = null,
+
+    // RN18: endereço pertence a um cliente (anulável para endereços já cadastrados)
+    @ManyToOne
+    @JoinColumn(name = "cliente_id")
+    val cliente: Cliente? = null
 
 ) {
     @PrePersist
@@ -76,6 +83,7 @@ data class Endereco(
         referencia = null,
         principal = false,
         ativo = true,
-        dataCadastro = null
+        dataCadastro = null,
+        cliente = null
     )
 }

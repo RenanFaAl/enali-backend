@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PedidoService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">enali</a> &gt; <a href="index.source.html" class="el_package">br.com.enali.service</a> &gt; <span class="el_source">PedidoService.kt</span></div><h1>PedidoService.kt</h1><pre class="source lang-java linenums">package br.com.enali.service
+
+import br.com.enali.dto.ItemPedidoRequest
+import br.com.enali.dto.PedidoRequest
+import br.com.enali.dto.PedidoResponse
+import br.com.enali.mapper.PedidoMapper
+import br.com.enali.model.Estoque
+import br.com.enali.model.ItemPedido
+import br.com.enali.repository.ClienteRepository
+import br.com.enali.repository.EnderecoRepository
+import br.com.enali.repository.EstoqueRepository
+import br.com.enali.repository.PedidoRepository
+import org.springframework.http.HttpStatus
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.server.ResponseStatusException
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
+<span class="fc" id="L20">@Service</span>
+<span class="fc" id="L21">class PedidoService(</span>
+<span class="fc" id="L22">    private val repository: PedidoRepository,</span>
+<span class="fc" id="L23">    private val mapper: PedidoMapper,</span>
+<span class="fc" id="L24">    private val clienteRepository: ClienteRepository,</span>
+<span class="fc" id="L25">    private val enderecoRepository: EnderecoRepository,</span>
+<span class="fc" id="L26">    private val estoqueRepository: EstoqueRepository</span>
+) {
+
+    // UC05 - Realizar Pedido. Cada &quot;if&quot; corresponde a um nó predicado do GFC (ComplexGraph).
+    @Transactional
+    fun criar(clienteId: Long, request: PedidoRequest): PedidoResponse {
+        // RN17: somente clientes autenticados (e ativos) podem realizar pedidos
+<span class="fc" id="L33">        val cliente = clienteRepository.findByIdAndAtivoTrue(clienteId)</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        if (cliente == null) {</span>
+<span class="fc" id="L35">            throw ResponseStatusException(HttpStatus.FORBIDDEN, &quot;Somente clientes autenticados podem realizar pedidos.&quot;)</span>
+        }
+
+        // RN18: o endereço de entrega deve ser um endereço ativo do próprio cliente
+<span class="fc" id="L39">        val endereco = enderecoRepository.findByIdAndClienteIdAndAtivoTrue(request.enderecoId, clienteId)</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if (endereco == null) {</span>
+<span class="fc" id="L41">            throw ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT, &quot;Cadastre ou selecione um endereço de entrega válido.&quot;)</span>
+        }
+
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (request.itens.isEmpty()) {</span>
+<span class="fc" id="L45">            throw ResponseStatusException(HttpStatus.BAD_REQUEST, &quot;O pedido deve conter pelo menos um item.&quot;)</span>
+        }
+
+<span class="fc" id="L48">        val quantidades = somarQuantidadesPorProduto(request.itens)</span>
+<span class="fc" id="L49">        val itens = mutableListOf&lt;ItemPedido&gt;()</span>
+<span class="fc" id="L50">        val estoquesReservados = mutableListOf&lt;Estoque&gt;()</span>
+<span class="fc" id="L51">        val indisponiveis = mutableListOf&lt;String&gt;()</span>
+
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        for ((produtoId, quantidade) in quantidades) {</span>
+<span class="fc" id="L54">            val estoque = estoqueRepository.findFirstByProdutoIdOrderByIdAsc(produtoId)</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">            if (estoque == null) {</span>
+<span class="fc" id="L56">                throw ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Produto $produtoId não encontrado.&quot;)</span>
+            }
+
+            // Fluxo de exceção b: produto desativado durante a compra
+<span class="fc bfc" id="L60" title="All 2 branches covered.">            if (!estoque.produto.disponivel) {</span>
+<span class="fc" id="L61">                throw ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT, &quot;O produto ${estoque.produto.nome} foi desativado. Remova-o do carrinho.&quot;)</span>
+            }
+
+            // RN26: verifica a disponibilidade antes de confirmar
+<span class="fc bfc" id="L65" title="All 2 branches covered.">            if (estoque.possuiDisponibilidade(quantidade)) {</span>
+<span class="fc" id="L66">                itens.add(ItemPedido.de(estoque.produto, quantidade))</span>
+<span class="fc" id="L67">                estoquesReservados.add(estoque.reservar(quantidade))</span>
+            } else {
+<span class="fc" id="L69">                indisponiveis.add(estoque.produto.nome)</span>
+            }
+        }
+
+        // Fluxo de exceção a: informa quais produtos estão sem estoque suficiente
+<span class="fc bfc" id="L74" title="All 4 branches covered.">        if (indisponiveis.isNotEmpty()) {</span>
+<span class="fc" id="L75">            throw ResponseStatusException(HttpStatus.CONFLICT, &quot;Estoque insuficiente para: ${indisponiveis.joinToString(&quot;, &quot;)}.&quot;)</span>
+        }
+
+        // RN27: registra produtos, quantidades, valores e endereço de entrega
+<span class="fc" id="L79">        val pedido = mapper.toEntity(request, gerarNumeroPedido(), cliente, endereco, itens)</span>
+
+        // Fluxo de exceção c: falha no cálculo do valor total
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        if (pedido.valorTotal &lt;= 0.0) {</span>
+<span class="fc" id="L83">            throw ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT, &quot;Não foi possível calcular o valor total do pedido.&quot;)</span>
+        }
+
+        // Fluxo de exceção d: o pedido é gravado antes da reserva; se falhar, nenhuma baixa é feita
+<span class="fc" id="L87">        val salvo = repository.save(pedido)</span>
+        // RN54: Estoque.reservar() já impediu saldo negativo
+<span class="fc" id="L89">        estoqueRepository.saveAll(estoquesReservados)</span>
+
+<span class="fc" id="L91">        return mapper.toResponse(salvo)</span>
+    }
+
+    // O mesmo produto repetido no carrinho vira uma única linha com a soma das quantidades
+    private fun somarQuantidadesPorProduto(itens: List&lt;ItemPedidoRequest&gt;): Map&lt;Long, Int&gt; {
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        return itens.groupBy { it.produtoId }.mapValues { (_, iguais) -&gt; iguais.sumOf { it.quantidade } }</span>
+    }
+
+    private fun gerarNumeroPedido(): String {
+<span class="fc" id="L100">        val prefixo = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)</span>
+
+<span class="fc" id="L102">        val proximoNumero = repository.findByNumeroPedidoStartingWith(prefixo)</span>
+<span class="fc" id="L103">            .mapNotNull { it.numeroPedido.removePrefix(prefixo).toIntOrNull() }</span>
+<span class="fc" id="L104">            .maxOrNull()</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">            ?.plus(1) ?: 1</span>
+
+<span class="fc" id="L107">        return prefixo + proximoNumero.toString().padStart(5, '0')</span>
+    }
+
+
+    fun listarTodos(): List&lt;PedidoResponse&gt; {
+<span class="nc" id="L112">        return repository.findAll().map {</span>
+<span class="nc" id="L113">            mapper.toResponse(it)</span>
+        }
+    }
+
+    fun buscarPorId(id: Long): PedidoResponse {
+<span class="nc" id="L118">        val pedido = repository.findById(id).orElseThrow {</span>
+<span class="nc" id="L119">            ResponseStatusException(</span>
+<span class="nc" id="L120">                HttpStatus.NOT_FOUND,</span>
+<span class="nc" id="L121">                &quot;Pedido não encontrado&quot;</span>
+<span class="nc" id="L122">            )</span>
+        }
+
+<span class="nc" id="L125">        return mapper.toResponse(pedido)</span>
+    }
+
+    fun buscarPorNumero(numero: String): List&lt;PedidoResponse&gt; {
+<span class="nc" id="L129">        return repository.buscarPorNumero(numero).map {</span>
+<span class="nc" id="L130">            mapper.toResponse(it)</span>
+        }
+    }
+
+    @Transactional
+    fun cancelar(id: Long): PedidoResponse {
+<span class="fc" id="L136">        val pedido = repository.findById(id).orElseThrow {</span>
+<span class="fc" id="L137">            ResponseStatusException(</span>
+<span class="fc" id="L138">                HttpStatus.NOT_FOUND,</span>
+<span class="fc" id="L139">                &quot;Pedido não encontrado&quot;</span>
+<span class="fc" id="L140">            )</span>
+        }
+
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        if (pedido.status.equals(&quot;CANCELADO&quot;, ignoreCase = true)) {</span>
+<span class="fc" id="L144">            throw ResponseStatusException(</span>
+<span class="fc" id="L145">                HttpStatus.CONFLICT,</span>
+<span class="fc" id="L146">                &quot;Este pedido já foi cancelado&quot;</span>
+            )
+        }
+
+        // Devolve ao estoque o que foi reservado na criação do pedido
+<span class="fc" id="L151">        val estoquesLiberados = pedido.itens.mapNotNull { item -&gt;</span>
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">            estoqueRepository.findFirstByProdutoIdOrderByIdAsc(item.produto.id)?.liberar(item.quantidade)</span>
+        }
+<span class="fc" id="L154">        estoqueRepository.saveAll(estoquesLiberados)</span>
+
+<span class="fc" id="L156">        val pedidoCancelado = pedido.copy(</span>
+<span class="fc" id="L157">            status = &quot;CANCELADO&quot;</span>
+        )
+
+<span class="fc" id="L160">        return mapper.toResponse(repository.save(pedidoCancelado))</span>
+    }
+
+    fun remover(id: Long) {
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        if (!repository.existsById(id)) {</span>
+<span class="nc" id="L165">            throw ResponseStatusException(</span>
+<span class="nc" id="L166">                HttpStatus.NOT_FOUND,</span>
+<span class="nc" id="L167">                &quot;Pedido não encontrado&quot;</span>
+            )
+        }
+
+<span class="nc" id="L171">        repository.deleteById(id)</span>
+<span class="nc" id="L172">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -4,6 +4,7 @@ plugins {
 	id("org.springframework.boot") version "4.0.8"
 	id("io.spring.dependency-management") version "1.1.7"
 	kotlin("plugin.jpa") version "2.2.21"
+	jacoco
 }
 
 group = "br.com.enali"
@@ -37,6 +38,7 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+	testRuntimeOnly("com.h2database:h2")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -54,4 +56,27 @@ allOpen {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+	finalizedBy(tasks.jacocoTestReport)
+}
+
+// Cobertura (JaCoCo) restrita às classes do UC05 - Realizar Pedido
+tasks.jacocoTestReport {
+	dependsOn(tasks.test)
+	reports {
+		html.required = true
+		xml.required = true
+	}
+	classDirectories.setFrom(
+		files(classDirectories.files.map {
+			fileTree(it) {
+				include(
+					"br/com/enali/service/PedidoService*",
+					"br/com/enali/mapper/PedidoMapper*",
+					"br/com/enali/model/Pedido*",
+					"br/com/enali/model/ItemPedido*",
+					"br/com/enali/model/Estoque*"
+				)
+			}
+		})
+	)
 }

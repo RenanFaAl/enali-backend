@@ -1,11 +1,13 @@
 package br.com.enali.controller
 
+import br.com.enali.config.UsuarioAutenticado
 import br.com.enali.dto.PedidoRequest
 import br.com.enali.dto.PedidoResponse
 import br.com.enali.service.PedidoService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -16,9 +18,10 @@ class PedidoController(
 
     @PostMapping
     fun criar(
+        @AuthenticationPrincipal usuario: UsuarioAutenticado,
         @Valid @RequestBody request: PedidoRequest
     ): ResponseEntity<PedidoResponse> {
-        val pedido = pedidoService.criar(request)
+        val pedido = pedidoService.criar(usuario.id, request)
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
