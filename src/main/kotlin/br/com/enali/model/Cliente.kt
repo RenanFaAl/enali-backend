@@ -27,5 +27,8 @@ data class Cliente(
     val dataNascimento: LocalDate,
 
     @field:Column(nullable = false)
-    val ativo: Boolean = true
+    val ativo: Boolean = true,
+
+    @field:OneToMany(mappedBy = "cliente", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
+    val enderecos: MutableList<Endereco> = mutableListOf()
 )

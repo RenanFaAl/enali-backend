@@ -1,6 +1,8 @@
 package br.com.enali.service
 
+import br.com.enali.model.Cliente
 import br.com.enali.model.Endereco
+import br.com.enali.model.Fornecedor
 import br.com.enali.repository.EnderecoRepository
 import org.springframework.stereotype.Service
 
@@ -33,10 +35,15 @@ class EnderecoService(
         return enderecoRepository.buscarPorSiglaEstado(estado)
     }
 
-    fun salvar(endereco: Endereco): Endereco {
-        return enderecoRepository.save(endereco)
+    fun salvarParaCliente(cliente: Cliente, endereco: Endereco): Endereco {
+        val enderecoComCliente = endereco.copy(cliente = cliente, fornecedor = null)
+        return enderecoRepository.save(enderecoComCliente)
     }
 
+    fun salvarParaFornecedor(fornecedor: Fornecedor, endereco: Endereco): Endereco {
+        val enderecoComFornecedor = endereco.copy(fornecedor = fornecedor, cliente = null)
+        return enderecoRepository.save(enderecoComFornecedor)
+    }
 
     fun atualizar(id: Long, enderecoAtualizado: Endereco): Endereco {
         val enderecoExistente = enderecoRepository.findById(id).orElse(null)
@@ -44,6 +51,8 @@ class EnderecoService(
 
         val enderecoParaSalvar = enderecoAtualizado.copy(
             id = enderecoExistente.id,
+            cliente = enderecoExistente.cliente,
+            fornecedor = enderecoExistente.fornecedor, 
             ativo = enderecoExistente.ativo,
             dataCadastro = enderecoExistente.dataCadastro
         )

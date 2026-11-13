@@ -1,11 +1,14 @@
+@baseUrl = http://localhost:8080
+@token = TOKEN
+
 ### Consultar meus dados
-GET http://localhost:8080/admin/me
-Authorization: Bearer TOKEN
+GET {{baseUrl}}/admin/me
+Authorization: Bearer {{token}}
 
 
 ### Atualizar meus dados
-PUT http://localhost:8080/admin/me
-Authorization: Bearer TOKEN
+PUT {{baseUrl}}/admin/me
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -15,8 +18,8 @@ Content-Type: application/json
 
 
 ### Alterar minha senha
-PATCH http://localhost:8080/admin/me/senha
-Authorization: Bearer TOKEN
+PATCH {{baseUrl}}/admin/me/senha
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -27,28 +30,28 @@ Content-Type: application/json
 
 
 ### Listar administradores
-GET http://localhost:8080/admin
-Authorization: Bearer TOKEN
+GET {{baseUrl}}/admin
+Authorization: Bearer {{token}}
 
 
 ### Buscar administrador por ID
-GET http://localhost:8080/admin/7
-Authorization: Bearer TOKEN
+GET {{baseUrl}}/admin/7
+Authorization: Bearer {{token}}
 
 
 ### Buscar administrador por e-mail
-GET http://localhost:8080/admin/buscar/email?email=guilherme5@teste.com
-Authorization: Bearer TOKEN
+GET {{baseUrl}}/admin/buscar/email?email=guilherme5@teste.com
+Authorization: Bearer {{token}}
 
 
 ### Buscar administradores por nome
-GET http://localhost:8080/admin/buscar/nome?nome=tes
-Authorization: Bearer TOKEN
+GET {{baseUrl}}/admin/buscar/nome?nome=tes
+Authorization: Bearer {{token}}
 
 
 ### Criar administrador
-POST http://localhost:8080/admin
-Authorization: Bearer TOKEN
+POST {{baseUrl}}/admin
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -59,8 +62,8 @@ Content-Type: application/json
 
 
 ### Atualizar administrador (nome e e-mail)
-PUT http://localhost:8080/admin/11
-Authorization: Bearer TOKEN
+PUT {{baseUrl}}/admin/11
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -70,5 +73,5 @@ Content-Type: application/json
 
 
 ### Deletar administrador
-DELETE http://localhost:8080/admin/11
-Authorization: Bearer TOKEN
+DELETE {{baseUrl}}/admin/11
+Authorization: Bearer {{token}}

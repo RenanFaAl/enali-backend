@@ -63,30 +63,17 @@ class SecurityConfig(
                     "/enderecos/**"
                 ).hasAnyRole("CLIENTE", "ADMIN_MASTER", "ADMIN_COMUM")
 
-                // Pedidos: criação exclusiva de clientes
+                // Pedidos: rotas do cliente logado 
                 it.requestMatchers(
-                    HttpMethod.POST,
-                    "/pedidos"
+                    "/pedidos/clientes/me/pedidos",
+                    "/pedidos/clientes/me/pedidos/**"
                 ).hasRole("CLIENTE")
 
-                // Pedidos: busca e listagem para administradores
+                // Pedidos: rotas gerais e administrativas (Listar, buscar por ID, cancelar por ID)
                 it.requestMatchers(
-                    HttpMethod.GET,
-                    "/pedidos/buscar",
-                    "/pedidos"
+                    "/pedidos",
+                    "/pedidos/**"
                 ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM")
-
-                // Pedidos: consulta por ID
-                it.requestMatchers(
-                    HttpMethod.GET,
-                    "/pedidos/*"
-                ).hasAnyRole("CLIENTE", "ADMIN_MASTER", "ADMIN_COMUM")
-
-                // Pedidos: cancelamento por cliente ou administrador
-                it.requestMatchers(
-                    HttpMethod.PATCH,
-                    "/pedidos/*/cancelar"
-                ).hasAnyRole("CLIENTE", "ADMIN_MASTER", "ADMIN_COMUM")
 
                 // Materiais: acesso total (visualizar, criar, atualizar, alterar disponibilidade e excluir) restrito apenas aos administradores
                 it.requestMatchers(
@@ -94,11 +81,17 @@ class SecurityConfig(
                     "/materiais/**"
                 ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM")
 
+                // Endereços de fornecedores: acesso exclusivo para administradores
+                it.requestMatchers(
+                    "/fornecedores/*/enderecos",
+                    "/fornecedores/*/enderecos/**"
+                ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM")
+                
                 // Fornecedores: acesso total (visualizar, criar, atualizar, alterar status e excluir) restrito apenas aos administradores
                 it.requestMatchers(
                     "/fornecedores",
                     "/fornecedores/**"
-                ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM")
+                ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM") 
 
                 // Produtos: visualização (listagem, por ID e busca) permitida para clientes e administradores
                 it.requestMatchers(

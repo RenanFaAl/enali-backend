@@ -23,5 +23,8 @@ data class Fornecedor(
     val telefone: String,
 
     @field:Column(nullable = false)
-    val ativo: Boolean = true
+    val ativo: Boolean = true,
+
+    @field:OneToMany(mappedBy = "fornecedor", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
+    val enderecos: MutableList<Endereco> = mutableListOf()
 )

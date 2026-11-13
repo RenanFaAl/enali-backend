@@ -1,4 +1,3 @@
-
 package br.com.enali.model
 
 import jakarta.persistence.*
@@ -25,5 +24,28 @@ data class Pedido(
     val status: String,
 
     @field:Column(length = 500)
-    val observacoes: String? = null
+    val observacoes: String? = null,
+
+    @field:ManyToOne(fetch = FetchType.LAZY)
+    @field:JoinColumn(name = "cliente_id", nullable = true)
+    val cliente: Cliente? = null,
+    
+    @field:Column(name = "cliente_id_snapshot", nullable = false)
+    val clienteId: Long,
+
+    @field:Column(name = "cliente_nome", nullable = false, length = 100)
+    val clienteNome: String,
+
+    @field:Column(name = "cliente_email", nullable = false, length = 150)
+    val clienteEmail: String,
+
+    @field:Column(name = "cliente_cpf", nullable = false, length = 11)
+    val clienteCpf: String,
+
+    @field:Embedded
+    val enderecoEntrega: EnderecoSnapshot,
+
+    @field:ElementCollection
+    @field:CollectionTable(name = "pedido_itens", joinColumns = [JoinColumn(name = "pedido_id")])
+    val itens: List<ItemPedidoSnapshot> = listOf()
 )

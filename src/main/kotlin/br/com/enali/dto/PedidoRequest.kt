@@ -1,12 +1,19 @@
 package br.com.enali.dto
 
+import jakarta.validation.Valid
+import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Positive
 import jakarta.validation.constraints.Size
 
 data class PedidoRequest(
+    @field:NotNull(message = "O ID do endereço de entrega é obrigatório")
+    @field:Positive(message = "O ID do endereço deve ser positivo")
+    val enderecoId: Long,
 
-    @field:Positive(message = "O valor total deve ser maior que zero")
-    val valorTotal: Double,
+    @field:NotEmpty(message = "O pedido deve conter pelo menos um item")
+    @field:Valid
+    val itens: List<ItemPedidoRequest>,
 
     @field:Size(
         max = 500,
