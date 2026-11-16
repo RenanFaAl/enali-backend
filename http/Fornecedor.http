@@ -1,22 +1,25 @@
+@baseUrl = http://localhost:8080
+@token = TOKEN
+
 ### Listar fornecedores
-GET http://localhost:8080/fornecedores
-Authorization: Bearer TOKEN
+GET {{baseUrl}}/fornecedores
+Authorization: Bearer {{token}}
 
 ### Buscar fornecedor por ID
-GET http://localhost:8080/fornecedores/1
-Authorization: Bearer TOKEN
+GET {{baseUrl}}/fornecedores/1
+Authorization: Bearer {{token}}
 
 ### Buscar fornecedor por CNPJ
-GET http://localhost:8080/fornecedores/buscar/cnpj?cnpj=12345678000190
-Authorization: Bearer TOKEN
+GET {{baseUrl}}/fornecedores/buscar/cnpj?cnpj=12345678000190
+Authorization: Bearer {{token}}
 
 ### Buscar fornecedores por nome
-GET http://localhost:8080/fornecedores/buscar/nome?nome=tecidos
-Authorization: Bearer TOKEN
+GET {{baseUrl}}/fornecedores/buscar/nome?nome=tecidos
+Authorization: Bearer {{token}}
 
 ### Criar fornecedor
-POST http://localhost:8080/fornecedores
-Authorization: Bearer TOKEN
+POST {{baseUrl}}/fornecedores
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -27,8 +30,8 @@ Content-Type: application/json
 }
 
 ### Atualizar fornecedor
-PUT http://localhost:8080/fornecedores/1
-Authorization: Bearer TOKEN
+PUT {{baseUrl}}/fornecedores/1
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -39,8 +42,8 @@ Content-Type: application/json
 }
 
 ### Ativar/desativar fornecedor
-PATCH http://localhost:8080/fornecedores/1/ativo
-Authorization: Bearer TOKEN
+PATCH {{baseUrl}}/fornecedores/1/ativo
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -48,5 +51,5 @@ Content-Type: application/json
 }
 
 ### Deletar fornecedor
-DELETE http://localhost:8080/fornecedores/1
-Authorization: Bearer TOKEN
+DELETE {{baseUrl}}/fornecedores/1
+Authorization: Bearer {{token}}

@@ -50,6 +50,15 @@ class EstoqueController(
             estoqueService.buscarPorId(id)
         )
     }
+    
+    @GetMapping("/produto/{produtoId}")
+    fun buscarPorProdutoId(
+        @PathVariable produtoId: Long
+    ): ResponseEntity<EstoqueResponseDTO> {
+        return ResponseEntity.ok(
+            estoqueService.buscarPorProdutoId(produtoId)
+        )
+    }
 
     @PutMapping("/{id}")
     fun atualizar(

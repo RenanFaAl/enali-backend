@@ -1,0 +1,38 @@
+@baseUrl = http://localhost:8080
+@token = TOKEN
+
+### Criar pedido
+POST {{baseUrl}}/pedidos/clientes/me/pedidos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "enderecoId": 1,
+    "itens": [
+        {
+            "produtoId": 1,
+            "quantidade": 2
+        },
+        {
+            "produtoId": 2,
+            "quantidade": 5
+        }
+    ],
+    "observacoes": "Pedido de teste com snapshot"
+}
+
+### Listar meus pedidos
+GET {{baseUrl}}/pedidos/clientes/me/pedidos
+Authorization: Bearer {{token}}
+
+### Buscar meus pedidos por número
+GET {{baseUrl}}/pedidos/clientes/me/pedidos/buscar?numero=2026111200005
+Authorization: Bearer {{token}}
+
+### Consultar meu pedido por ID
+GET {{baseUrl}}/pedidos/clientes/me/pedidos/1
+Authorization: Bearer {{token}}
+
+### Cancelar meu pedido
+PATCH {{baseUrl}}/pedidos/clientes/me/pedidos/5/cancelar
+Authorization: Bearer {{token}}

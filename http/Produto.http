@@ -1,7 +1,7 @@
 
 @baseUrl = http://localhost:8080
-@token = COLE_SEU_TOKEN_AQUI
-@produtoId = 1
+@token = TOKEN
+@produtoId = 5
 
 ### Cadastrar produto
 POST {{baseUrl}}/produtos

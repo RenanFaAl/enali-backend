@@ -1,12 +1,15 @@
+@baseUrl = http://localhost:8080
+@token = TOKEN
+
 # Consultar meus dados
-GET http://localhost:8080/clientes/me
-Authorization: Bearer TOKEN
+GET {{baseUrl}}/clientes/me
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 
 # Atualizar meus dados
-PUT http://localhost:8080/clientes/me
-Authorization: Bearer TOKEN
+PUT {{baseUrl}}/clientes/me
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -18,8 +21,8 @@ Content-Type: application/json
 
 
 # Alterar minha senha
-PATCH http://localhost:8080/clientes/me/senha
-Authorization: Bearer TOKEN
+PATCH {{baseUrl}}/clientes/me/senha
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {

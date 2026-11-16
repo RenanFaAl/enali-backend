@@ -1,0 +1,14 @@
+@baseUrl = http://localhost:8080
+@token = TOKEN
+
+### Listar pedidos (Admin)
+GET {{baseUrl}}/pedidos
+Authorization: Bearer {{token}}
+
+### Buscar pedidos (Admin)
+GET {{baseUrl}}/pedidos/buscar?numero=20261112
+Authorization: Bearer {{token}}
+
+### Cancelar pedido (Admin)
+PATCH {{baseUrl}}/pedidos/1/cancelar
+Authorization: Bearer {{token}}

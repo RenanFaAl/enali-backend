@@ -1,0 +1,50 @@
+@baseUrl = http://localhost:8080
+@token = TOKEN
+@fornecedorId = 2
+@enderecoId = 5
+
+### Listar endereços do fornecedor
+GET {{baseUrl}}/fornecedores/{{fornecedorId}}/enderecos
+Authorization: Bearer {{token}}
+
+### Criar endereço para o fornecedor
+POST {{baseUrl}}/fornecedores/{{fornecedorId}}/enderecos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "rua": "Rua dos Comerciantes",
+    "numero": "500",
+    "complemento": "Galpão B",
+    "bairro": "Industrial",
+    "cidade": "São Paulo",
+    "estado": "São Paulo",
+    "siglaEstado": "SP",
+    "cep": "04000-000",
+    "pais": "Brasil",
+    "referencia": "Próximo à rodovia",
+    "principal": true
+}
+
+### Atualizar endereço do fornecedor
+PUT {{baseUrl}}/fornecedores/{{fornecedorId}}/enderecos/{{enderecoId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "rua": "Avenida Industrial Atualizada",
+    "numero": "1000",
+    "complemento": "Galpão Principal",
+    "bairro": "Distrito Industrial",
+    "cidade": "São Paulo",
+    "estado": "São Paulo",
+    "siglaEstado": "SP",
+    "cep": "04000-100",
+    "pais": "Brasil",
+    "referencia": "Em frente à portaria 2",
+    "principal": true
+}
+
+### Deletar endereço do fornecedor
+DELETE {{baseUrl}}/fornecedores/{{fornecedorId}}/enderecos/{{enderecoId}}
+Authorization: Bearer {{token}}

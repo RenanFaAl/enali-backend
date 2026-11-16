@@ -14,4 +14,15 @@ interface PedidoRepository : JpaRepository<Pedido, Long> {
                 "WHERE LOWER(p.numeroPedido) LIKE LOWER(CONCAT('%', :numero, '%'))"
     )
     fun buscarPorNumero(@Param("numero") numero: String): List<Pedido>
+    
+    fun findByClienteId(clienteId: Long): List<Pedido>
+
+    fun findByIdAndClienteId(id: Long, clienteId: Long): Pedido?
+    
+    @Query(
+        "SELECT p FROM Pedido p " +
+                "WHERE p.clienteId = :clienteId " +
+                "AND LOWER(p.numeroPedido) LIKE LOWER(CONCAT('%', :numero, '%'))"
+    )
+    fun buscarPorClienteENumero(@Param("clienteId") clienteId: Long, @Param("numero") numero: String): List<Pedido>
 }

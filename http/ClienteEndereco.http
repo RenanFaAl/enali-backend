@@ -1,0 +1,48 @@
+@baseUrl = http://localhost:8080
+@token = TOKEN
+
+### Listar meus endereços
+GET {{baseUrl}}/clientes/me/enderecos
+Authorization: Bearer {{token}}
+
+### Criar meu endereço
+POST {{baseUrl}}/clientes/me/enderecos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "rua": "Avenida Águia de Haia",
+    "numero": "2983",
+    "complemento": "FATEC Zona Leste",
+    "bairro": "Cidade Antônio Estêvão de Carvalho",
+    "cidade": "São Paulo",
+    "estado": "São Paulo",
+    "siglaEstado": "SP",
+    "cep": "03694-000",
+    "pais": "Brasil",
+    "referencia": "Ao lado da ETEC Zona Leste",
+    "principal": true
+}
+
+### Atualizar meu endereço
+PUT {{baseUrl}}/clientes/me/enderecos/7
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "rua": "Avenida Paulista",
+    "numero": "1000",
+    "complemento": "Apartamento 12",
+    "bairro": "Bela Vista",
+    "cidade": "São Paulo",
+    "estado": "São Paulo",
+    "siglaEstado": "SP",
+    "cep": "01310-100",
+    "pais": "Brasil",
+    "referencia": "Próximo ao metrô",
+    "principal": true
+}
+
+### Deletar meu endereço
+DELETE {{baseUrl}}/clientes/me/enderecos/10
+Authorization: Bearer {{token}}

@@ -1,11 +1,14 @@
+@baseUrl = http://localhost:8080
+@token = TOKEN
+
 ### Listar clientes (Admin)
-GET http://localhost:8080/clientes
-Authorization: Bearer TOKEN
+GET {{baseUrl}}/clientes
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 # Alterar status do cliente
-PATCH http://localhost:8080/clientes/1/ativo
-Authorization: Bearer TOKEN
+PATCH {{baseUrl}}/clientes/1/ativo
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -13,16 +16,16 @@ Content-Type: application/json
 }
 
 ### Consultar cliente por ID
-GET http://localhost:8080/clientes/1
-Authorization: Bearer TOKEN
+GET {{baseUrl}}/clientes/1
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 ### Buscar clientes por nome
-GET http://localhost:8080/clientes/buscar?nome=Cliente
-Authorization: Bearer TOKEN
+GET {{baseUrl}}/clientes/buscar?nome=Cliente
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 ### Excluir cliente
-DELETE http://localhost:8080/clientes/2
-Authorization: Bearer TOKEN
+DELETE {{baseUrl}}/clientes/2
+Authorization: Bearer {{token}}
 Content-Type: application/json

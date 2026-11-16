@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import java.util.Optional
 
 @Repository
 interface EstoqueRepository : JpaRepository<Estoque, Long> {
@@ -17,4 +18,6 @@ interface EstoqueRepository : JpaRepository<Estoque, Long> {
     fun buscarPorLocalizacao(
         @Param("localizacao") localizacao: String
     ): List<Estoque>
+    
+    fun findByProdutoId(produtoId: Long): Optional<Estoque>
 }
