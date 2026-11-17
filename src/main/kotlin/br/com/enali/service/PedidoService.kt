@@ -20,6 +20,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Service
+@Transactional 
 class PedidoService(
     private val repository: PedidoRepository,
     private val clienteRepository: ClienteRepository,
@@ -45,6 +46,13 @@ class PedidoService(
             val produto = produtosMap[itemDto.produtoId]
                 ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Produto com ID ${itemDto.produtoId} não encontrado.")
 
+            if (!produto.disponivel) {
+                throw ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "O produto '${produto.nome}' está indisponível/inativo no momento. Por favor, remova-o do carrinho para prosseguir com o pedido."
+                )
+            }
+
             val estoque = estoqueRepository.findByProdutoId(itemDto.produtoId).orElseThrow {
                 ResponseStatusException(HttpStatus.BAD_REQUEST, "O produto '${produto.nome}' não possui registro de estoque cadastrado.")
             }
@@ -55,11 +63,6 @@ class PedidoService(
                     "Estoque insuficiente para o produto '${produto.nome}'. Quantidade solicitada: ${itemDto.quantidade}, disponível em estoque: ${estoque.quantidadeDisponivel}."
                 )
             }
-
-            val estoqueAtualizado = estoque.copy(
-                quantidadeDisponivel = estoque.quantidadeDisponivel - itemDto.quantidade
-            )
-            estoqueRepository.save(estoqueAtualizado)
         }
         
         val dataAtual = LocalDate.now()
@@ -80,7 +83,17 @@ class PedidoService(
             produtosMap = produtosMap
         )
 
-        return mapper.toResponse(repository.save(pedido))
+        val pedidoSalvo = repository.save(pedido)
+
+        for (itemDto in request.itens) {
+            val estoque = estoqueRepository.findByProdutoId(itemDto.produtoId).get()
+            val estoqueAtualizado = estoque.copy(
+                quantidadeDisponivel = estoque.quantidadeDisponivel - itemDto.quantidade
+            )
+            estoqueRepository.save(estoqueAtualizado)
+        }
+
+        return mapper.toResponse(pedidoSalvo)
     }
     
     fun listarPorCliente(clienteId: Long): List<PedidoResponse> {
@@ -197,5 +210,4 @@ class PedidoService(
             }
         }
     }
-
 }

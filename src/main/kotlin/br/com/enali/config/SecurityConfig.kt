@@ -93,13 +93,13 @@ class SecurityConfig(
                     "/fornecedores/**"
                 ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM") 
 
-                // Produtos: visualização (listagem, por ID e busca) permitida para clientes e administradores
+                // Produtos: visualização livre para qualquer usuário (autenticado ou não)
                 it.requestMatchers(
                     HttpMethod.GET,
                     "/produtos",
                     "/produtos/**",
                     "/produtos/buscar"
-                ).hasAnyRole("CLIENTE", "ADMIN_MASTER", "ADMIN_COMUM")
+                ).permitAll()
 
                 // Produtos: criação exclusivas para administradores
                 it.requestMatchers(
@@ -119,7 +119,13 @@ class SecurityConfig(
                     "/produtos/**"
                 ).hasAnyRole("ADMIN_MASTER", "ADMIN_COMUM")
 
-                // Estoque: acesso total (visualizar, criar, alterar e excluir) restrito apenas aos administradores
+                // Estoque: consulta de disponibilidade por ID do produto liberada para qualquer usuário (autenticado ou não)
+                it.requestMatchers(
+                    HttpMethod.GET,
+                    "/estoques/produto/**"
+                ).permitAll()
+
+                // Estoque: gerenciamento (listagem, criar, atualizar e excluir) restrito apenas aos administradores
                 it.requestMatchers(
                     "/estoques",
                     "/estoques/**"
