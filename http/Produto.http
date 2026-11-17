@@ -1,7 +1,7 @@
 
 @baseUrl = http://localhost:8080
 @token = TOKEN
-@produtoId = 5
+@produtoId = 1
 
 ### Cadastrar produto
 POST {{baseUrl}}/produtos
@@ -18,15 +18,12 @@ Content-Type: application/json
 
 ### Listar produtos
 GET {{baseUrl}}/produtos
-Authorization: Bearer {{token}}
 
 ### Buscar produto por ID
 GET {{baseUrl}}/produtos/{{produtoId}}
-Authorization: Bearer {{token}}
 
 ### Buscar produto por nome
 GET {{baseUrl}}/produtos/buscar?nome=caneca
-Authorization: Bearer {{token}}
 
 ### Atualizar produto
 PUT {{baseUrl}}/produtos/{{produtoId}}

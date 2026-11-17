@@ -1,7 +1,7 @@
 
 @baseUrl = http://localhost:8080
 @token = TOKEN
-@produtoId = 2
+@produtoId = 1
 @estoqueId = 1
 
 ### Cadastrar estoque
@@ -28,7 +28,6 @@ Authorization: Bearer {{token}}
 
 ### Buscar estoque pelo ID do Produto (Usado no Frontend e para conferência)
 GET {{baseUrl}}/estoques/produto/{{produtoId}}
-Authorization: Bearer {{token}}
 
 ### Buscar por localização
 GET {{baseUrl}}/estoques/buscar?localizacao=Prateleira

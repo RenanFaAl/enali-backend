@@ -11,6 +11,17 @@ import org.springframework.web.server.ResponseStatusException
 @RestControllerAdvice
 class ApplicationExceptionHandlerController {
 
+    @ExceptionHandler(RuntimeException::class)
+    fun handleRuntimeException(
+        ex: RuntimeException
+    ): ResponseEntity<Map<String, String>> {
+        val erro = mapOf(
+            "erro" to (ex.message ?: "Erro interno no servidor")
+        )
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(erro)
+    }
+
     @ExceptionHandler(ResponseStatusException::class)
     fun handleResponseStatusException(
         ex: ResponseStatusException
