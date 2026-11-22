@@ -1,4 +1,3 @@
-
 package br.com.enali.model
 
 import jakarta.persistence.*
@@ -18,7 +17,6 @@ data class Produto(
 
     @field:Column(nullable = false, length = 500)
     val descricao: String,  
-
 
     @field:Column(nullable = false, precision = 12, scale = 2) 
     val preco: BigDecimal,
