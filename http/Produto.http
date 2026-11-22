@@ -1,11 +1,15 @@
-
 @baseUrl = http://localhost:8080
 @token = TOKEN
 @produtoId = 1
+@imagemId = 1
 
-### Cadastrar produto
+### Cadastrar produto com várias imagens
 POST {{baseUrl}}/produtos
 Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="produto"
 Content-Type: application/json
 
 {
@@ -15,6 +19,35 @@ Content-Type: application/json
     "disponivel": true,
     "desconto": 10.0
 }
+--boundary
+Content-Disposition: form-data; name="imagens"; filename="caneca-frente.png"
+Content-Type: image/png
+
+< ./caneca-frente.png
+--boundary
+Content-Disposition: form-data; name="imagens"; filename="caneca-verso.png"
+Content-Type: image/png
+
+< ./caneca-verso.png
+--boundary--
+
+### Cadastrar produto sem imagens
+POST {{baseUrl}}/produtos
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="produto"
+Content-Type: application/json
+
+{
+    "nome": "Camiseta básica",
+    "descricao": "Camiseta 100% algodão",
+    "preco": 59.90,
+    "disponivel": true,
+    "desconto": 0.0
+}
+--boundary--
 
 ### Listar produtos
 GET {{baseUrl}}/produtos
@@ -37,6 +70,28 @@ Content-Type: application/json
     "disponivel": true,
     "desconto": 5.0
 }
+
+### Adicionar imagem ao produto (ordem opcional)
+POST {{baseUrl}}/produtos/{{produtoId}}/imagens?ordem=2
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="arquivo"; filename="caneca-detalhe.png"
+Content-Type: image/png
+
+< ./caneca-detalhe.png
+--boundary--
+
+### Listar imagens do produto
+GET {{baseUrl}}/produtos/{{produtoId}}/imagens
+
+### Visualizar imagem específica do produto (público)
+GET {{baseUrl}}/produtos/{{produtoId}}/imagens/{{imagemId}}
+
+### Remover imagem específica do produto
+DELETE {{baseUrl}}/produtos/{{produtoId}}/imagens/{{imagemId}}
+Authorization: Bearer {{token}}
 
 ### Excluir produto
 DELETE {{baseUrl}}/produtos/{{produtoId}}
