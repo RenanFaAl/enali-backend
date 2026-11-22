@@ -3,6 +3,7 @@ package br.com.enali.repository
 
 import br.com.enali.model.Estoque
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
@@ -20,4 +21,8 @@ interface EstoqueRepository : JpaRepository<Estoque, Long> {
     ): List<Estoque>
     
     fun findByProdutoId(produtoId: Long): Optional<Estoque>
+    
+    @Modifying
+    @Query("DELETE FROM Estoque e WHERE e.produto.id = :produtoId")
+    fun deleteAllByProdutoId(@Param("produtoId") produtoId: Long)
 }

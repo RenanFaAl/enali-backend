@@ -6,6 +6,7 @@ import br.com.enali.dto.ProdutoResponseDTO
 import br.com.enali.mapper.ProdutoMapper
 import br.com.enali.model.Produto
 import br.com.enali.model.ProdutoImagem
+import br.com.enali.repository.EstoqueRepository
 import br.com.enali.repository.ProdutoImagemRepository
 import br.com.enali.repository.ProdutoRepository
 import org.springframework.http.HttpStatus
@@ -18,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException
 class ProdutoService(
     private val repository: ProdutoRepository,
     private val imagemRepository: ProdutoImagemRepository,
+    private val estoqueRepository: EstoqueRepository,
     private val mapper: ProdutoMapper
 ) {
 
@@ -117,6 +119,7 @@ class ProdutoService(
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado.")
         }
         imagemRepository.deleteAllByProdutoId(id)
+        estoqueRepository.deleteAllByProdutoId(id)
         repository.deleteById(id)
     }
 
