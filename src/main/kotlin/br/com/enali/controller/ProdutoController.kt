@@ -12,11 +12,16 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.util.concurrent.TimeUnit
+import tools.jackson.databind.ObjectMapper
+import jakarta.validation.ConstraintViolationException
+import jakarta.validation.Validator
 
 @RestController
 @RequestMapping("/produtos")
 class ProdutoController(
-    private val produtoService: ProdutoService
+    private val produtoService: ProdutoService,
+    private val objectMapper: ObjectMapper,
+    private val validator: Validator
 ) {
 
     @PostMapping
@@ -32,9 +37,15 @@ class ProdutoController(
     
     @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun criar(
-        @Valid @RequestPart("produto") request: ProdutoRequestDTO,
+        @RequestPart("produto") produtoJson: String,
         @RequestPart("imagens", required = false) imagens: List<MultipartFile>?
     ): ResponseEntity<ProdutoResponseDTO> {
+        val request = objectMapper.readValue(produtoJson, ProdutoRequestDTO::class.java)
+        val violacoes = validator.validate(request)
+        if (violacoes.isNotEmpty()) {
+            throw ConstraintViolationException(violacoes)
+        }
+
         val produto = produtoService.criarComImagens(request, imagens)
 
         return ResponseEntity
