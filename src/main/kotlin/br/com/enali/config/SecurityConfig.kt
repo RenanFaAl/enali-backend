@@ -28,6 +28,9 @@ class SecurityConfig(
             }
             .authorizeHttpRequests {
 
+                // Documentação Swagger/OpenAPI pública
+                it.requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
+
                 // Autenticação pública
                 it.requestMatchers(
                     HttpMethod.POST,

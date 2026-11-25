@@ -1,6 +1,11 @@
 spring:
   application:
     name: enali
+  # fotos de produto e do pedido aceitam até 5 MB cada (o padrão do Spring é 1 MB)
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 30MB
   datasource:
     url: ${DB_URL}
     username: ${DB_USER}
