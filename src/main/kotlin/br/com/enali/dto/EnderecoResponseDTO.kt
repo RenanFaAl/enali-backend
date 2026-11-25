@@ -16,5 +16,7 @@ data class EnderecoResponseDTO(
     val referencia: String?,
     val principal: Boolean,
     val ativo: Boolean,
-    val dataCadastro: LocalDateTime?
+    val dataCadastro: LocalDateTime?,
+    // "Cliente: Nome" ou "Fornecedor: Nome"; null em endereço de entrega de pedido
+    val dono: String? = null
 )

@@ -37,7 +37,9 @@ object EnderecoMapper {
             referencia = endereco.referencia,
             principal = endereco.principal,
             ativo = endereco.ativo,
-            dataCadastro = endereco.dataCadastro
+            dataCadastro = endereco.dataCadastro,
+            dono = endereco.cliente?.let { "Cliente: ${it.nome}" }
+                ?: endereco.fornecedor?.let { "Fornecedor: ${it.nome}" }
         )
     }
 }
